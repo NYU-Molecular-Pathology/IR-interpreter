@@ -1,0 +1,69 @@
+Blood
+Bone Marrow
+Lymph Node
+Breast
+Colon
+Endometrium
+Lung
+Ovary
+Prostate
+Rectum
+Stomach
+Thyroid
+Esophagus
+Unknown
+Skin
+Bone
+Chest Wall
+Brain
+Spinal Cord
+Infratentorial
+Supratentorial
+Bladder
+Kidney
+Small Intestine
+Anus
+Pancreas
+Gall Bladder
+Liver
+Ureter
+Spleen
+Uterus
+Appendix
+Ampulla (Pancreaticobiliary Duct)
+Parathyroid
+Soft Tissue
+Gastroesophageal Junction
+Oral Cavity
+Pharynx
+Vulva
+Peritoneum
+Retroperitoneum
+Larynx
+Testis
+Nasal Cavity
+Adrenal Gland
+Cervix
+Eye
+Fallopian Tube
+Fibroadipose Tissue
+Penis
+Peripheral Nervous System
+Pituitary
+Placenta
+Pleura
+Salivary Gland
+Seminal Vesicle
+Skeletal Muscle
+Thymus
+Tonsil
+Vagina
+Cartilage
+Blood Vessel
+Buccal Swab
+Heart
+Trachea
+Salivary Duct
+Spermatic Cord
+Sellar
+Suprasellar
