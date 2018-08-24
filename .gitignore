@@ -2,3 +2,4 @@ conda
 conda*
 db
 db/*
+__pycache__/

@@ -112,7 +112,6 @@ def save_db(interpretations, entries, output):
     interpretations.to_sql("interpretations", conn, if_exists = "replace", index = False)
     entries.to_sql("entries", conn, if_exists = "replace", index = False)
     # test that it worked
-    # my_debugger(locals().copy())
     # pd.read_sql_query("select * from entries;", conn)
     # pd.read_sql_query("select TumorType from entries;", conn)
 
@@ -133,24 +132,6 @@ def save_db_tumor(db, output):
     with open(output, "w") as f:
         for tumor in tumors:
             f.write("{0}\n".format(tumor))
-
-def my_debugger(vars):
-    '''
-    starts interactive Python terminal at location in script
-    very handy for debugging
-    call this function with
-    my_debugger(globals().copy())
-    anywhere in the body of the script, or
-    my_debugger(locals().copy())
-    within a script function
-    '''
-    import readline # optional, will allow Up/Down/History in the console
-    import code
-    # vars = globals().copy() # in python "global" variables are actually module-level
-    vars.update(locals())
-    shell = code.InteractiveConsole(vars)
-    shell.interact()
-
 
 def main(**kwargs):
     """
