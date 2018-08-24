@@ -1,0 +1,151 @@
+Atypical Chronic Myeloid Leukemia
+Chronic Neutrophilic Leukemia
+Myeloproliferative Neoplasm
+Essential Thrombocythemia
+Primary Myelofibrosis
+Diffuse Large B Cell Lymphoma
+Marginal Zone B Cell Lymphoma
+Acute Myeloid Leukemia
+Chronic Myelomonocytic Leukemia
+Myelodysplastic Syndrome
+Chronic Lymphocytic Leukemia
+MDS with Ring Sideroblasts
+Lymphoplasmacytic Lymphoma
+T Lymphoblastic Leukemia/Lymphoma
+Mast Cell Neoplasm
+Hairy Cell Leukemia
+Histiocytic and Dendritic Cell Neoplasms
+Langerhans Cell Histiocytosis
+Polycythemia Vera
+B Lymphoblastic Leukemia/Lymphoma
+Chronic Myeloid Leukemia
+Adenocarcinoma
+Carcinoma
+Papillary Carcinoma
+Squamous Cell Carcinoma
+Melanoma
+Fibromatosis
+Craniopharyngioma
+Glioblastoma
+Urothelial Carcinoma
+Follicular Carcinoma
+Medullary Carcinoma
+Astrocytoma
+Anaplastic
+Ependymoma
+Oligodendroglioma
+Gastrointestinal Stromal Tumor
+Pleomorphic Carcinoma
+Papillary Renal Cell Carcinoma
+Non-Small Cell Lung Carcinoma
+Cholangiocarcinoma
+Lobular Carcinoma
+Renal Cell Carcinoma
+Sarcoma
+Hepatocellular Carcinoma
+Small Cell Carcinoma
+Ductal Carcinoma
+Invasive Ductal Carcinoma
+Medulloblastoma
+Neuroblastoma
+Clear Cell Renal Cell Carcinoma
+Liposarcoma
+Follicular Lymphoma
+Mantle Cell Lymphoma
+Other Acute Leukemia
+Basal Cell Carcinoma
+Neuroendocrine Carcinoma
+Germ Cell Tumor
+Sex Cord Stromal Tumor
+Pilocytic
+Acinar Cell Carcinoma
+Acinic Cell Carcinoma
+Adenoid Cystic Carcinoma
+Adenosarcoma
+Ameloblastic Tumor
+Anaplastic Large Cell Lymphoma
+Angioimmunoblastic T-Cell Lymphoma
+Angiomatoid Fibrous Histiocytoma
+Angiomatosis
+Angiomyolipoma
+Angiosarcoma
+Burkitt Lymphoma
+Carcinoid Tumor
+Carcinosarcoma
+Chondrosarcoma
+Chordoma
+Choriocarcinoma
+Chromophobe Renal Cell Carcinoma
+Classical Hodgkin Lymphoma
+Clear Cell Carcinoma
+Dermatofibrosarcoma
+Desmoplastic Small Round Cell Tumor
+Ewing Sarcoma
+Giant Cell Tumor
+Glomus Tumor
+Granular Cell Tumor
+Hemangioendothelioma
+Kaposi Sarcoma
+Leiomyoma
+Leiomyosarcoma
+Lipoma
+Malignant Mullerian Mixed Tumor
+Meningioma
+Merkel Cell Carcinoma
+Mesothelioma
+Mucinous Tumors of Appendix
+Mucinous Tumors of Ovary
+Mucoepidermoid Carcinoma
+Myxofibrosarcoma
+Nasopharyngeal Carcinoma
+Neuroendocrine Neoplasm
+NK Cell Lymphoproliferative Disorder
+NLPHL
+Osteosarcoma
+Peripheral T Cell Lymphoma
+Pheochromocytoma
+Plasma Cell Disorder
+Post-Transplant Lymphoproliferative Disorder
+Primitive Neuroectodermal Tumor
+Reninoma
+Retinoblastoma
+Rhabdomyosarcoma
+Schwannoma
+Serous Carcinoma
+Solid Pseudopapillary Tumor of Pancreas
+Spindle Cell Neoplasm
+T Cell Lymphoproliferative Disorder
+T-Cell LGL Leukemia
+Thymic Carcinoma
+Thymoma
+Tumors of Peripheral Nerves
+Unknown
+Wilms Tumor
+Ganglioglioma
+Neuroepithelial Neoplasm
+NOS
+Solitary Fibrous Tumor
+Neuroepithelial neoplasm
+high grade
+Leukocytosis
+Thrombocytosis
+Monocytosis
+Cytopenia
+Acute Leukemia of Unspecified Cell Type
+Anemia
+Unspecified
+Diffusely Infiltrating
+Diffuse Midline Glioma
+Infiltrating Glioma
+Intraductal Papillary Mucinous Neoplasm (IPMN)
+Leukopenia
+Lymphadenopathy
+Lymphocytosis
+Symptomatic
+Monoclonal Gammopathy
+Mucinous or Serous Cystic Neoplasms of Pancreas
+Mycosis Fungoides
+Unspecified Site
+Pleomorphic Xanthoastrocytoma
+Rash and Other Nonspecific Skin Eruption
+Thrombocytopenia
