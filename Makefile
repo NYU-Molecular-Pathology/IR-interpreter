@@ -41,7 +41,7 @@ $(PMKB_XLSX):
 
 $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUMORFILE): $(PMKB_XLSX) conda
 	@echo ">>> Generating PMKB database and files from Excel sheet..."
-	@pmkb.py --pmkb-xlsx "$(PMKB_XLSX)" \
+	@pmkb2db.py --pmkb-xlsx "$(PMKB_XLSX)" \
 	--db "$(PMKB_DB)" \
 	--entries "$(PMKB_ENTRIES)" \
 	--interpretations "$(PMKB_INTERPRETATIONS)" \
