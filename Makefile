@@ -18,8 +18,11 @@ conda:
 	bash "$(CONDASH)" -b -p conda && \
 	rm -f "$(CONDASH)"
 
+conda-search: conda
+	conda search '*jinja*'
+
 conda-install: conda
-	conda install -y pandas=0.23.4 'xlrd>=0.9.0'
+	conda install -y pandas=0.23.4 'xlrd>=0.9.0' jinja2=2.10
 
 test-conda:
 	python -c 'import sys,pandas; print(sys.version); print(pandas.__version__)'
@@ -51,5 +54,10 @@ $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUM
 setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUMORFILE)
 .PHONY: setup-db
 
+# ~~~~~ ~~~~~ ~~~~~ #
+py-test:
+	app/test.py
+
 test:
-	./IR.py
+	app/IR.py
+	# ./jinja.py

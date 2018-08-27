@@ -48,8 +48,9 @@ class IRTable(object):
         Query the interpretations for each record from the database
         """
         for i, _ in enumerate(self.records):
-            sources = self.records[i].get_sources(conn)
-            self.records[i].interpretations = self.records[i].get_interpretations(conn, sources)
+            # sources = self.records[i].get_sources(conn)
+            # self.records[i].interpretations = self.records[i].get_interpretations(conn, sources)
+            self.records[i]._get_interpretations(conn)
 
 class IRRecord(object):
     """
@@ -96,6 +97,15 @@ class IRRecord(object):
             seq=','.join(['?']*len(sources)))
         interpretations = [ {'Interpretation': i, 'Citation': c} for i, c in cur.execute(sql, sources).fetchall() ]
         return(interpretations)
+
+    def _get_interpretations(self, conn):
+        """
+        Internal method to set own interpretations
+        """
+        sources = self.get_sources(conn)
+        interpretations = self.get_interpretations(conn, sources)
+        self.interpretations = interpretations
+        self.data['interpretations'] = interpretations
 
     def __repr__(self):
         # return(str(self.__class__) + ": " + str(self.__dict__))
