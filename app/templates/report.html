@@ -15,6 +15,14 @@ th, td {
     padding: 15px;
     text-align: left;
 }
+.irtable th {
+  background-color: #ccccff;
+}
+
+.pmkbtable th {
+  background-color: #ffcccc;
+}
+
   </style>
 
 </head>
@@ -22,9 +30,9 @@ th, td {
   <div style="overflow-x:auto;">
     {% for record in IRtable.records %}
 
-     <table style="width:100%;">
+     <table style="width:100%;", class="irtable">
       <tr>
-        <th>Locus</th>
+        <th>IR Locus</th>
         <th>Genes</th>
         <th>Variant ID</th>
       </tr>
@@ -35,15 +43,27 @@ th, td {
       </tr>
     </table>
 
-    <table style="width:100%;">
+    <table style="width:100%;", class="pmkbtable">
       <tr>
-        <th>Interpretation</th>
+        <th>PMKB Interpretation</th>
+        <th>Gene</th>
+        <th>TumorType</th>
+        <th>TissueType</th>
+        <th>Variant</th>
+        <th>Tier</th>
         <th>Citation</th>
+        <th>Source Row</th>
       </tr>
       {% for interpretation in record.interpretations  %}
       <tr>
         <td>{{ interpretation['Interpretation'] }}</td>
+        <td>{{ interpretation['Gene'] }}</td>
+        <td>{{ interpretation['TumorType'] }}</td>
+        <td>{{ interpretation['TissueType'] }}</td>
+        <td>{{ interpretation['Variant'] }}</td>
+        <td>{{ interpretation['Tier'] }}</td>
         <td>{{ interpretation['Citation'] }}</td>
+        <td>{{ interpretation['Source'] }}</td>
       </tr>
       {% else %}
       <td>No interpretations found.</td>

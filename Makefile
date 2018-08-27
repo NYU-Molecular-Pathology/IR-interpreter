@@ -73,9 +73,17 @@ setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) 
 .PHONY: setup-db
 
 # ~~~~~ ~~~~~ ~~~~~ #
+# run the unit test suite
 test:
 	app/test.py
 
+# run a demo for example report output
 demo:
 	# app/IR.py
 	app/template.py
+
+# enter debug console
+# t.records[0].interpretations[0]
+# t.records[0].interpretations[0].keys()
+debug:
+	python -c 'from app.dev import debugger; from app.IR import demo; t = demo(); debugger(globals().copy())'

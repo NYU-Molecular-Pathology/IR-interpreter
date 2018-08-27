@@ -4,7 +4,6 @@
 """
 import os
 from jinja2 import FileSystemLoader, Environment, select_autoescape
-from dev import debugger
 import IR
 
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -24,4 +23,5 @@ if __name__ == '__main__':
 
     with open(output_html, "w") as f:
         f.write(parsed)
+    # from dev import debugger
     # debugger(globals().copy())

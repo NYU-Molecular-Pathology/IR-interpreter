@@ -4,3 +4,5 @@ db
 db/*
 __pycache__/
 output.html
+app/__init__.pyc
+*.pyc
