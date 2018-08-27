@@ -38,9 +38,9 @@ PMKB_TUMORFILE:=$(DB_DIR)/pmkb.tumor-terms.txt
 PMKB_TISSUEFILE:=$(DB_DIR)/pmkb.tissue-terms.txt
 
 # download the PMKB database file
-$(PMKB_XLSX): 
+$(PMKB_XLSX):
 	@echo ">>> Downloading clinical interpretations sheet from PMKB..."
-	@wget "$(PMKB_URL)" -O "$(PMKB_XLSX)" 
+	@wget "$(PMKB_URL)" -O "$(PMKB_XLSX)"
 
 $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUMORFILE): $(PMKB_XLSX) conda
 	@echo ">>> Generating PMKB database and files from Excel sheet..."
@@ -59,5 +59,5 @@ test:
 	app/test.py
 
 demo:
-	# app/IR.py
-	app/template.py
+	app/IR.py
+	# app/template.py

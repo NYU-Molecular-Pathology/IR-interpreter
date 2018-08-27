@@ -7,6 +7,7 @@ import json
 import pandas as pd
 from dev import debugger
 import sqlite3
+from collections import OrderedDict
 
 class IRTable(object):
     """
@@ -23,14 +24,18 @@ class IRTable(object):
         Load the contents of the .tsv file into a dataframe
         """
         df = pd.read_csv(source, sep = '\t', comment = '#')
+        # add original table row numbers as a column in the table
+        df.index.names = ['Row']
+        df = df.reset_index()
         return(df)
 
     def get_records(self, data):
         """
         Create a list of IRRecord objects for each entry in the table
         """
-        records = [ IRRecord(record) for record in data.to_dict(orient='records') ]
-        return(records)
+        records = data.to_dict(orient='records')
+        ir_records = [ IRRecord(record) for record in records ]
+        return(ir_records)
 
     def load_header(self, source, pattern = '##'):
         """
@@ -48,8 +53,6 @@ class IRTable(object):
         Query the interpretations for each record from the database
         """
         for i, _ in enumerate(self.records):
-            # sources = self.records[i].get_sources(conn)
-            # self.records[i].interpretations = self.records[i].get_interpretations(conn, sources)
             self.records[i]._get_interpretations(conn)
 
 class IRRecord(object):
@@ -68,14 +71,24 @@ class IRRecord(object):
         """
         Parse the 'Genes' field in each entry
         """
-        genes = set()
-        # split fusions apart and remove number in parenthesis
+        # use dict to maintain unique key values
+        genes = OrderedDict()
+        # try to split fusions apart and remove number in parenthesis
         if len(text.split(' - ')) > 1:
-            genes.update([ gene.split('(')[0] for gene in text.split(' - ') ])
-        # split all other entries on comma
+            # genes.update([ gene.split('(')[0] for gene in text.split(' - ') ])
+            for gene in text.split(' - '):
+                gene = gene.split('(')[0]
+                genes[gene] = ''
+        # try to split all other entries on comma
         if len(text.split(',')) > 1:
-            genes.update([ gene for gene in text.split(',') ])
-        return(list(genes))
+            # genes.update([ gene for gene in text.split(',') ])
+            for gene in text.split(','):
+                genes[gene] = ''
+        # if there are still no genes in the dict, then use the entry as given
+        if len(list(genes.keys())) < 1:
+            gene = text
+            genes[gene] = ''
+        return(list(genes.keys()))
 
     def get_sources(self, conn):
         """
