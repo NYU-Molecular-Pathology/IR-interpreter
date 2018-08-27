@@ -3,3 +3,4 @@ conda*
 db
 db/*
 __pycache__/
+output.html

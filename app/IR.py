@@ -111,6 +111,22 @@ class IRRecord(object):
         # return(str(self.__class__) + ": " + str(self.__dict__))
         return(str(self.data))
 
+def demo(IRtable = None, PMKBdb = None):
+    """
+    Return the demo loaded table with interpretations
+    """
+    if IRtable is None:
+        IRtable = "example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv"
+    if PMKBdb is None:
+        PMKBdb = "db/pmkb.db"
+    # load demo IR table
+    table = IRTable(source = IRtable)
+    # get interpretations from database
+    conn = sqlite3.connect(PMKBdb)
+    table.lookup_all_interpretations(conn)
+    return(table)
+
+
 
 
 
@@ -126,4 +142,4 @@ if __name__ == '__main__':
     t.lookup_all_interpretations(conn)
     # sources = t.records[19].get_sources(conn)
     # interpretations = t.records[19].get_interpretations(conn, sources)
-    debugger(globals().copy())
+    # debugger(globals().copy())

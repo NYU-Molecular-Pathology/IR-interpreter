@@ -55,9 +55,9 @@ setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) 
 .PHONY: setup-db
 
 # ~~~~~ ~~~~~ ~~~~~ #
-py-test:
+test:
 	app/test.py
 
-test:
-	app/IR.py
-	# ./jinja.py
+demo:
+	# app/IR.py
+	app/template.py

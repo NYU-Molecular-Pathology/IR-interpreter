@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8"/>
+    <title>IR Interpreter</title>
+    <style>
+
+table {
+  border: 1px solid black;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+tr:nth-child(odd) {background-color: #f2f2f2;} 
+th, td {
+    padding: 15px;
+    text-align: left;
+}
+  </style>
+
+</head>
+<body>
+  <div style="overflow-x:auto;">
+    {% for record in IRtable.records %}
+
+     <table style="width:100%;">
+      <tr>
+        <th>Locus</th>
+        <th>Genes</th>
+        <th>Variant ID</th>
+      </tr>
+      <tr>
+        <td>{{ record.data['Locus'] }}</td>
+        <td>{{ record.data['Genes'] }}</td>
+        <td>{{ record.data['Variant ID'] }}</td>
+      </tr>
+    </table>
+
+    <table style="width:100%;">
+      <tr>
+        <th>Interpretation</th>
+        <th>Citation</th>
+      </tr>
+      {% for interpretation in record.interpretations  %}
+      <tr>
+        <td>{{ interpretation['Interpretation'] }}</td>
+        <td>{{ interpretation['Citation'] }}</td>
+      </tr>
+      {% else %}
+      <td>No interpretations found.</td>
+      {% endfor %}
+    </table> 
+    <br>
+
+    {% endfor %}
+  </div>
+    
+</body>
+</html>
