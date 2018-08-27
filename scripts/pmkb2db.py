@@ -146,7 +146,8 @@ def main(**kwargs):
 
     pmkb_df = xlsx2df(pmkb_xlsx)
     pmkb_df = clean_pmkb_df(pmkb_df)
-    interpretations = make_interpretations(pmkb_df)
+    interpretations = pmkb_df
+    # interpretations = make_interpretations(pmkb_df)
     entries = make_entries(pmkb_df)
 
     if interpretations_file:
@@ -166,11 +167,11 @@ def parse():
     """
     parser = argparse.ArgumentParser(description='Prints a column from a file')
     parser.add_argument("--pmkb-xlsx", default = "pmkb.xlsx", dest = 'pmkb_xlsx', help="PMKB Excel spreadsheet input")
-    parser.add_argument("--db", default = "pmkb.db", dest = 'pmkb_db', help="SQLite output file")
-    parser.add_argument("--interpretations", default = "pmkb.interpretations.tsv", dest = 'interpretations_file', help="Output file for clinical interpretations")
-    parser.add_argument("--entries", default = "pmkb.entries.csv", dest = 'entries_file', help="Output file for variant entries")
-    parser.add_argument("--tumors", default = "pmkb.tumor-terms.txt", dest = 'tumors_file', help="Output file for tumor type terms")
-    parser.add_argument("--tissues", default = "pmkb.tissue-terms.txt", dest = 'tissues_file', help="Output file for tissue type terms")
+    parser.add_argument("--db", default = None, dest = 'pmkb_db', help="SQLite output file") # "pmkb.db"
+    parser.add_argument("--interpretations", default = None, dest = 'interpretations_file', help="Output file for clinical interpretations") # "pmkb.interpretations.tsv"
+    parser.add_argument("--entries", default = None, dest = 'entries_file', help="Output file for variant entries") # "pmkb.entries.csv"
+    parser.add_argument("--tumors", default = None, dest = 'tumors_file', help="Output file for tumor type terms") # "pmkb.tumor-terms.txt"
+    parser.add_argument("--tissues", default = None, dest = 'tissues_file', help="Output file for tissue type terms") # "pmkb.tissue-terms.txt"
 
     args = parser.parse_args()
 

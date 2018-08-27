@@ -42,14 +42,32 @@ $(PMKB_XLSX):
 	@echo ">>> Downloading clinical interpretations sheet from PMKB..."
 	@wget "$(PMKB_URL)" -O "$(PMKB_XLSX)"
 
-$(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUMORFILE): $(PMKB_XLSX) conda
-	@echo ">>> Generating PMKB database and files from Excel sheet..."
+$(PMKB_DB): $(PMKB_XLSX) conda
+	@echo ">>> Generating PMKB database..."
+	@pmkb2db.py --pmkb-xlsx "$(PMKB_XLSX)" \
+	--db "$(PMKB_DB)"
+
+$(PMKB_ENTRIES): $(PMKB_XLSX) conda
+	@echo ">>> Generating PMKB entries..."
+	@pmkb2db.py --pmkb-xlsx "$(PMKB_XLSX)" \
+	--entries "$(PMKB_ENTRIES)"
+
+$(PMKB_INTERPRETATIONS): $(PMKB_XLSX) conda
+	@echo ">>> Generating PMKB interpretations..."
+	@pmkb2db.py --pmkb-xlsx "$(PMKB_XLSX)" \
+	--interpretations "$(PMKB_INTERPRETATIONS)"
+
+$(PMKB_TISSUEFILE):
+	@echo ">>> Generating PMKB tissue entries..."
 	@pmkb2db.py --pmkb-xlsx "$(PMKB_XLSX)" \
 	--db "$(PMKB_DB)" \
-	--entries "$(PMKB_ENTRIES)" \
-	--interpretations "$(PMKB_INTERPRETATIONS)" \
-	--tumors "$(PMKB_TUMORFILE)" \
-	--tissues "$(PMKB_TISSUEFILE)"
+	--tumors "$(PMKB_TISSUEFILE)"
+
+$(PMKB_TUMORFILE): $(PMKB_XLSX) conda
+	@echo ">>> Generating PMKB tumor entries..."
+	@pmkb2db.py --pmkb-xlsx "$(PMKB_XLSX)" \
+	--db "$(PMKB_DB)" \
+	--tissues "$(PMKB_TUMORFILE)"
 
 setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUMORFILE)
 .PHONY: setup-db
@@ -59,5 +77,5 @@ test:
 	app/test.py
 
 demo:
-	app/IR.py
-	# app/template.py
+	# app/IR.py
+	app/template.py
