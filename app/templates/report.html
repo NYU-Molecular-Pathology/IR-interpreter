@@ -34,12 +34,22 @@ th, td {
       <tr>
         <th>IR Locus</th>
         <th>Genes</th>
+        <th>Matched Genes</th>
+        <th>Genotype</th>
+        <th>Ref</th>
+        <th>Type</th>
         <th>Variant ID</th>
+        <th>Source Row</th>
       </tr>
       <tr>
         <td>{{ record.data['Locus'] }}</td>
         <td>{{ record.data['Genes'] }}</td>
+        <td>{{ record.genes }}</td>
+        <td>{{ record.data['Genotype'] }}</td>
+        <td>{{ record.data['Ref'] }}</td>
+        <td>{{ record.data['Type'] }}</td>
         <td>{{ record.data['Variant ID'] }}</td>
+        <td>{{ record.data['Row'] }}</td>
       </tr>
     </table>
 
