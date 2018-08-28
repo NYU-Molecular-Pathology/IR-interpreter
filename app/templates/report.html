@@ -32,22 +32,22 @@ th, td {
 
      <table style="width:100%;", class="irtable">
       <tr>
-        <th>IR Locus</th>
-        <th>Genes</th>
+        <th>IR Genes</th>
         <th>Matched Genes</th>
-        <th>Genotype</th>
-        <th>Ref</th>
-        <th>Type</th>
+        <th>Coding</th>
+        <th>Amino Acid Change</th>
+        <th>% Frequency</th>
+        <th>Coverage</th>
         <th>Variant ID</th>
         <th>Source Row</th>
       </tr>
       <tr>
-        <td>{{ record.data['Locus'] }}</td>
         <td>{{ record.data['Genes'] }}</td>
         <td>{{ record.genes }}</td>
-        <td>{{ record.data['Genotype'] }}</td>
-        <td>{{ record.data['Ref'] }}</td>
-        <td>{{ record.data['Type'] }}</td>
+        <td>{{ record.data['Coding'] }}</td>
+        <td>{{ record.data['Amino Acid Change'] }}</td>
+        <td>{{ record.data['% Frequency'] }}</td>
+        <td>{{ record.data['Coverage'] }}</td>
         <td>{{ record.data['Variant ID'] }}</td>
         <td>{{ record.data['Row'] }}</td>
       </tr>
