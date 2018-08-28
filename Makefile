@@ -84,6 +84,16 @@ demo:
 
 # enter debug console
 # t.records[0].interpretations[0]
+# t.records[5].interpretations
 # t.records[0].interpretations[0].keys()
+# p.get_sources(genes = ['NRAS'])
+# genes = ['NRAS', 'EGFR']
+# p.get_gene_sources(genes)
 debug:
-	python -c 'from app.dev import debugger; from app.IR import demo; t = demo(); debugger(globals().copy())'
+	python -c 'import app.pmkb as pmkb; import app.ir as ir; import app.dev as dev; p, i = pmkb.demo(); t = ir.demo(); dev.debugger(globals().copy())'
+
+# t.lookup_all_interpretations(db = p)
+# python -c 'from app.dev import debugger; from app.IR import demo; t = demo(); debugger(globals().copy())'
+# python -c 'from app.dev import debugger; from app.PMKB import demo; p, i = demo(); debugger(globals().copy())'
+# python -c 'import sys; import app; print(sys.modules); p, i = app.PMKB.demo(); t = app.IR.demo(); app.dev.debugger(globals().copy())'
+# python -c 'import sys; import app; print(sys.modules); print(dir(app))'

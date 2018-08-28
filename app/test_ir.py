@@ -5,7 +5,7 @@ unit tests for the IR module
 """
 import os
 import unittest
-from IR import IRTable
+from ir import IRTable
 from dev import debugger
 
 # run from parent repo dir

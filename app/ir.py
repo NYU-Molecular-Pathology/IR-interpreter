@@ -3,9 +3,7 @@
 """
 Module for parsing Ion Reporter exported .tsv file and looking up entries in database
 """
-import json
 import pandas as pd
-import sqlite3
 from collections import OrderedDict
 
 class IRTable(object):
@@ -91,17 +89,17 @@ class IRTable(object):
                     header_lines.append(line.strip())
         return(header_lines)
 
-    def lookup_all_interpretations(self, conn):
+    def lookup_all_interpretations(self, db):
         """
         Queries the interpretations for each record from the database.
 
         Parameters
         ---------
-        conn:
-            Connection to database object
+        db:
+            a database object such as ``PMKB.PMKB()``
         """
         for i, _ in enumerate(self.records):
-            self.records[i]._get_interpretations(conn)
+            self.records[i]._get_interpretations(db)
 
 class IRRecord(object):
     """
@@ -118,18 +116,21 @@ class IRRecord(object):
     Example usage::
 
         y = IRRecord(data = '')
-        y.get_genes('TMPRSS2(1) - ERG(2)')
-        y.get_genes('EGFR,EGFR-AS1')
+        y.parse_genes('TMPRSS2(1) - ERG(2)')
+        y.parse_genes('EGFR,EGFR-AS1')
 
     Notes
     -----
     ``IRRecord`` objects do not have ``interpretations`` upon initialization, because an extra database connection is required. Set a record's interpretations by calling ``record._get_interpretations(conn)``
     """
-    def __init__(self, data):
+    def __init__(self, data, tumorType = None, tissueType = None, variant = None):
         self.data = data
-        self.genes = self.get_genes(self.data['Genes'])
+        self.tumorType = tumorType
+        self.tissueType = tissueType
+        self.variant = variant
+        self.genes = self.parse_genes(self.data['Genes'])
 
-    def get_genes(self, text):
+    def parse_genes(self, text):
         """
         Parses text to find the gene names
 
@@ -147,11 +148,11 @@ class IRRecord(object):
         --------
         Example usage::
 
-            get_genes('TMPRSS2(1) - ERG(2)')
+            parse_genes('TMPRSS2(1) - ERG(2)')
             >>> ['TMPRSS2', 'ERG']
-            get_genes('EGFR,EGFR-AS1')
+            parse_genes('EGFR,EGFR-AS1')
             >>> ['EGFR', 'EGFR-AS1']
-            get_genes('NRAS')
+            parse_genes('NRAS')
             >>> ['NRAS']
 
         """
@@ -174,71 +175,22 @@ class IRRecord(object):
             genes[gene] = ''
         return(list(genes.keys()))
 
-    def get_sources(self, conn):
-        """
-        Queries the PMKB database to produce a list of matching 'Source' values for the record.
-
-        IR Record to PMKB matching logic goes here.
-
-        Parameters
-        ---------
-        conn:
-            Connection to database object
-
-        Returns
-        -------
-        list:
-            a list of values representing the 'Source' identifiers for matching entries in the database
-
-        Notes
-        -----
-        Currently only matches on Gene ID's
-
-        Todo
-        ----
-        Pull in match filtering based on Tissue and Tumor types, potentially IR reported variant as well.
-        """
-        cur = conn.cursor()
-        genes = self.genes
-        sql = "SELECT Source from entries where Gene in ({seq})".format(
-            seq=','.join(['?']*len(genes)))
-        sources = [ row[0] for row in cur.execute(sql, genes).fetchall() ]
-        sources = list(set(sources))
-        return(sources)
-
-    def get_interpretations(self, conn, sources):
-        """
-        Queries the PMKB database interpretations table to produce a list of all interpretations for sources which were matched to the record.
-
-        Parameters
-        ----------
-        conn:
-            Connection to database object
-        sources: list
-            list of 'source' identifiers from the PMKB entries table to search for in the interpretations table
-
-        Returns
-        -------
-        list:
-            a list of dictionaries containing the interpretations
-        """
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        sql = "SELECT * from interpretations where Source in ({seq})".format(seq=','.join(['?']*len(sources)))
-        interpretations = [ dict(row) for row in cur.execute(sql, sources).fetchall() ]
-        return(interpretations)
-
-    def _get_interpretations(self, conn):
+    def _get_interpretations(self, db):
         """
         Internal method to set object's own ``interpretations`` value
 
         Parameters
         ----------
-        conn:
-            Connection to database object
+        db:
+            a database object such as ``PMKB.PMKB()``
         """
-        sources = self.get_sources(conn)
-        interpretations = self.get_interpretations(conn, sources)
+        # sources = self.get_sources(conn)
+        params = {
+        'genes': self.genes,
+        'tumorType': self.tumorType,
+        'tissueType': self.tissueType
+        }
+        interpretations = db.query(params = params)
         self.interpretations = interpretations
         self.data['interpretations'] = interpretations
 
@@ -262,11 +214,13 @@ def demo(IRtable = None, PMKBdb = None):
         IRtable = "example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv"
     if PMKBdb is None:
         PMKBdb = "db/pmkb.db"
+
     # load demo IR table
     table = IRTable(source = IRtable)
+
     # get interpretations from database
-    conn = sqlite3.connect(PMKBdb)
-    table.lookup_all_interpretations(conn)
+    # db = pmkb.PMKB(source = PMKBdb)
+    # table.lookup_all_interpretations(db = db)
     return(table)
 
 
@@ -277,15 +231,15 @@ if __name__ == '__main__':
     """
     Initialize a demo session if called directly
     """
-    IR_file = "example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv"
-    t = IRTable(source = IR_file)
+    # IR_file = "example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv"
+    # t = IRTable(source = IR_file)
     # x = t.records[34].data['Genes']
     # t.records[34].genes # ['TMPRSS2', 'ERG']
     # t.records[19].genes # ['EGFR', 'EGFR-AS1']
 
-    PMKB_db = "db/pmkb.db"
-    conn = sqlite3.connect(PMKB_db)
-    t.lookup_all_interpretations(conn)
+    # PMKB_db = "db/pmkb.db"
+    # conn = sqlite3.connect(PMKB_db)
+    # t.lookup_all_interpretations(conn)
     # sources = t.records[19].get_sources(conn)
     # interpretations = t.records[19].get_interpretations(conn, sources)
     # from dev import debugger
