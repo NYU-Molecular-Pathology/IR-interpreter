@@ -6,3 +6,5 @@ __pycache__/
 output.html
 app/__init__.pyc
 *.pyc
+*.html
+test

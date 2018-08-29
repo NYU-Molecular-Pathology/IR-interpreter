@@ -97,3 +97,5 @@ debug:
 # python -c 'from app.dev import debugger; from app.PMKB import demo; p, i = demo(); debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); p, i = app.PMKB.demo(); t = app.IR.demo(); app.dev.debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); print(dir(app))'
+monitor:
+	app/monitor.py example-data
