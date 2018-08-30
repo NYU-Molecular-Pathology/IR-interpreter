@@ -8,3 +8,4 @@ app/__init__.pyc
 *.pyc
 *.html
 test
+.DS_Store

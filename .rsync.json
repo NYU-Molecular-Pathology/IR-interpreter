@@ -1,0 +1,6 @@
+{
+    "sourceDir": "input/",
+    "targetDir": "/remote/server/output/",
+    "targetServer": "hostname.org",
+    "targetServerUsername": "user123"
+}
