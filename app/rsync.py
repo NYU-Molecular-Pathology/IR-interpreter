@@ -74,7 +74,7 @@ def rsync_args(source, target, flags = (), dryRun = False, swap = False):
     else:
         targetArg = target
     if config.get('sourceServer'):
-        sourceArg = config['sourceServerUsername'] + '@' + config['sourceServer'] + ':' + target
+        sourceArg = config['sourceServerUsername'] + '@' + config['sourceServer'] + ':' + source
     else:
         sourceArg = source
     # if swap was set, reverse order of source and target args
