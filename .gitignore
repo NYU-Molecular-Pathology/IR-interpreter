@@ -9,3 +9,5 @@ app/__init__.pyc
 *.html
 test
 .DS_Store
+logs/
+logs/*

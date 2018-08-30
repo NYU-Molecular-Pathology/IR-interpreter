@@ -101,7 +101,19 @@ debug:
 
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
-EP:=
+EP:=--rsync --rsync-config "$(RSYNC_CONFIG)"
+LOG:=
 monitor:
-	app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" $(EP)
+	@if [ -z "$(LOG)" ]; then \
+	app/monitor.py "$(MONITOR_DIR)" $(EP) ; \
+	else mkdir -p logs; \
+	logfile="logs/monitor.$$(date '+%Y-%m-%d-%H-%M-%S').log" ; \
+	app/monitor.py "$(MONITOR_DIR)" $(EP) 2>&1 > "$${logfile}" ; \
+	fi
 # app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
+
+# “At minute 0 past hour 12 and 23.” e.g. 12:00, 23:00 # https://crontab.guru/
+CRONINTERVAL:=0 12,23 * * *
+CRONCMD:=. $(shell echo $$HOME)/.bash_profile; cd $(shell pwd); make monitor LOG=1 >/dev/null 2>&1
+cron_cmd:
+	@echo "$(CRONCMD)"
