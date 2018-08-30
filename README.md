@@ -9,7 +9,7 @@ The [Thermo Fisher S5](https://www.thermofisher.com/us/en/home/life-science/sequ
 
 The [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu/) ([PMKB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/)) offers curated interpretations of many such variants which can be used for this purpose. Users can manually enter their desired variant into the PMKB website, manually look up entries in the PMKB [Excel sheet](https://pmkb.weill.cornell.edu/therapies/download.xlsx) available for download, or may use an API to query entries programmatically. While the latter option would be most ideal for a scripted solution, API usage requires the inclusion of Tumor and Tissue Type parameters, which are not always available for the program-user. 
 
-An offline solution the automation of the clinical interpretation of IR results was desired. `IR-interpreter` attempts to solve this through to following method(s):
+`IR-interpreter` provides an automated offline solution to this using the following method(s):
 
 - creation of a portable SQLite database based on the PMKB Excel sheet (included)
 
