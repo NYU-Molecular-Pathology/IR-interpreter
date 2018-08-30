@@ -8,7 +8,8 @@ import subprocess as sp
 
 config = {
 'sourceDir': "input",
-'targetDir': 'output'
+'targetDir': 'output',
+'flags': '-vzhrP' # or None
 }
 
 def load_config(input_json = "rsync.json"):
@@ -24,7 +25,7 @@ def load_config(input_json = "rsync.json"):
         d = json.load(f)
     config.update(d)
 
-def rsync_args(source, target, flags = ('-vzhrP',), dryRun = False, swap = False):
+def rsync_args(source, target, flags = (), dryRun = False, swap = False):
     """
     Generates args to use for running ``rsync`` on the local system.
 
@@ -53,7 +54,11 @@ def rsync_args(source, target, flags = ('-vzhrP',), dryRun = False, swap = False
     """
     # base arg
     args = ['rsync']
-    # add flags
+    # add default flags
+    if 'flags' in config and config['flags']:
+        defaultFlags = config['flags']
+        args.append(defaultFlags)
+    # add passed flags
     for item in flags:
         args.append(item)
     # add dry run
@@ -81,7 +86,7 @@ def rsync_args(source, target, flags = ('-vzhrP',), dryRun = False, swap = False
         args.append(targetArg)
     return(args)
 
-def rsync(source, target, dryRun = True, swap = False):
+def rsync(source, target, flags = (), dryRun = True, swap = False):
     """
     Makes a system call to ``rsync`` to copy files and directories between locations.
 
@@ -97,7 +102,7 @@ def rsync(source, target, dryRun = True, swap = False):
         wether or not to swap the order of ``source`` and ``target`` arguments, effectively reversing the sync direction.
 
     """
-    args = rsync_args(source = source, target = target, dryRun = dryRun, swap = swap)
+    args = rsync_args(source = source, target = target, dryRun = dryRun, swap = swap, flags = flags)
     cmd = ' '.join(args)
     print(cmd)
     # rsync -vzheR --copy-links --progress -e "ssh" --files-from="$server_file_list" ${server_info}:/results/analysis/output/Home/ "${outdir}"

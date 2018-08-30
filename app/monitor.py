@@ -70,6 +70,8 @@ def main(**kwargs):
     useRsync = kwargs.pop('useRsync', False)
     rsyncConfig = kwargs.pop('rsyncConfig', None)
     overwrite = kwargs.pop('overwrite', False)
+    removeSource = kwargs.pop('removeSource', False)
+
 
 
     for inputDir in inputDirs:
@@ -85,9 +87,13 @@ def main(**kwargs):
             rsync.rsync(source = inputDir, target = rsync.config['targetDir'], dryRun = False, swap = True)
             # then process all files in local input dir
             make_reports(inputDir = inputDir, overwrite = overwrite)
-            # then copy everything back to remote destination
+            # then copy everything back to remote destination; remove local copies
             print(">>> Syncing {0} directory with {1}".format(rsync.config['targetDir'], inputDir))
-            rsync.rsync(source = inputDir, target = rsync.config['targetDir'], dryRun = False)
+            if removeSource:
+                flags = ['--remove-source-files']
+            else:
+                flags = []
+            rsync.rsync(source = inputDir, target = rsync.config['targetDir'], dryRun = False, flags = flags)
         else:
             # process all files in local input dir
             make_reports(inputDir = inputDir)
@@ -101,6 +107,7 @@ def parse():
     parser.add_argument("--rsync", action='store_true', dest = 'useRsync', help="Use rsync before and after checking input directories")
     parser.add_argument("--rsync-config", default = None, dest = 'rsyncConfig', help="JSON formatted config file to use for rsync parameters")
     parser.add_argument("--overwrite", action='store_true', dest = 'overwrite', help="Overwrite pre-existing HTML output for input .tsv files")
+    parser.add_argument("--remove-source", action='store_true', dest = 'removeSource', help="Remove local source files when using rsync, so that only remote files remain after running")
 
 
     args = parser.parse_args()

@@ -97,7 +97,11 @@ debug:
 # python -c 'from app.dev import debugger; from app.PMKB import demo; p, i = demo(); debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); p, i = app.PMKB.demo(); t = app.IR.demo(); app.dev.debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); print(dir(app))'
+
+
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
+EP:=
 monitor:
-	app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite
+	app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" $(EP)
+# app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
