@@ -35,7 +35,7 @@ def find_input_IR_tsvs(inputDir):
             if item.endswith('.tsv'):
                 yield(os.path.join(root, item))
 
-def make_reports(inputDir):
+def make_reports(inputDir, overwrite = False):
     """
     Makes HTML reports for all valid input files found in the supplied directory.
 
@@ -53,9 +53,14 @@ def make_reports(inputDir):
     """
     for input in find_input_IR_tsvs(inputDir):
         output = os.path.splitext(input)[0] + ".html"
-        if not os.path.exists(output):
-            print(">>> Making output: {0}".format(output))
+        if os.path.exists(output):
+            if overwrite is True:
+                print(">>> Overwriting output: {0}".format(output))
+                template.make_report(input = input, output = output)
+        else:
+            print(">>> Generating output: {0}".format(output))
             template.make_report(input = input, output = output)
+
 
 def main(**kwargs):
     """
@@ -64,6 +69,8 @@ def main(**kwargs):
     inputDirs = kwargs.pop('inputDirs')
     useRsync = kwargs.pop('useRsync', False)
     rsyncConfig = kwargs.pop('rsyncConfig', None)
+    overwrite = kwargs.pop('overwrite', False)
+
 
     for inputDir in inputDirs:
         print(">>> Processing {0} dir".format(inputDir))
@@ -77,7 +84,7 @@ def main(**kwargs):
             print(">>> Syncing {0} directory with {1}".format(inputDir, rsync.config['targetDir']))
             rsync.rsync(source = inputDir, target = rsync.config['targetDir'], dryRun = False, swap = True)
             # then process all files in local input dir
-            make_reports(inputDir = inputDir)
+            make_reports(inputDir = inputDir, overwrite = overwrite)
             # then copy everything back to remote destination
             print(">>> Syncing {0} directory with {1}".format(rsync.config['targetDir'], inputDir))
             rsync.rsync(source = inputDir, target = rsync.config['targetDir'], dryRun = False)
@@ -93,6 +100,8 @@ def parse():
     parser.add_argument('inputDirs', nargs='+', help="Local directories to monitor for input files")
     parser.add_argument("--rsync", action='store_true', dest = 'useRsync', help="Use rsync before and after checking input directories")
     parser.add_argument("--rsync-config", default = None, dest = 'rsyncConfig', help="JSON formatted config file to use for rsync parameters")
+    parser.add_argument("--overwrite", action='store_true', dest = 'overwrite', help="Overwrite pre-existing HTML output for input .tsv files")
+
 
     args = parser.parse_args()
 

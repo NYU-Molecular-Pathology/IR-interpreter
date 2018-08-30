@@ -100,4 +100,4 @@ debug:
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
 monitor:
-	app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)"
+	app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite
