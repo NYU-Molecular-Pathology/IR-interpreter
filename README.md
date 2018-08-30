@@ -19,6 +19,43 @@ The [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu/) ([PMKB]
 
 - output of plain-text interpretations for each variant that are easy to copy/paste into systems such as PowerPath and EPIC
 
+# Usage
+
+## Installation
+
+Clone this repo:
+
+```
+git clone --depth 1 https://github.com/NYU-Molecular-Pathology/IR-interpreter.git
+cd IR-interpreter
+```
+
+The included `conda` recipe can install all required dependencies in a fresh conda installation in the current directory:
+
+```
+make conda
+```
+
+- by default, all commands invoked through the included `Makefile` use this conda installation
+
+If you would prefer to manage dependency installation yourself, you can install required libraries from the included `requirements.txt` file.
+
+## Make a Report
+
+You can make a report from an Ion Reporter .tsv export file with the following command:
+
+```
+app/report.py /path/to/Ion_Reporter_Sample.tsv
+```
+
+By default, output will be written to a file with the same path with the extension '.html'.
+
+An example can be run with the following command:
+
+```
+make demo
+```
+
 ## Monitored Directory
 
 `IR-interpreter` can automatically process all input .tsv files in a directory with the included `monitor.py` module:
