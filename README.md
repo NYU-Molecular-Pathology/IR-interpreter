@@ -19,6 +19,34 @@ The [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu/) ([PMKB]
 
 - output of plain-text interpretations for each variant that are easy to copy/paste into systems such as PowerPath and EPIC
 
+## Monitored Directory
+
+`IR-interpreter` can automatically process all input .tsv files in a directory with the included `monitor.py` module:
+
+```
+app/monitor.py /path/to/inputDir
+```
+
+It can also be combined with `rsync` to first copy files from a directory on a remote server, process all inputs, then copy results back. A JSON formatted config file should be used for this (example `.rsync.json` included):
+
+```
+app/monitor.py /path/to/inputDir --rsync --rsync-config /path/to/rsync.json
+```
+
+`cron` can be used to run this feature automatically. A sample `crontab` entry can be generated with
+
+```
+make crontab
+```
+
+And will look like this:
+
+```
+0 12,23 * * * . /ifs/home/kellys04/.bash_profile; cd /ifs/production/IR-interpreter; make monitor LOG=1 >/dev/null 2>&1
+```
+
+Timestamped logs will be deposited in the `logs` subdir in this directory.
+
 # Software
 
 - Python 3.6+
