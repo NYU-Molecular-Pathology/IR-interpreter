@@ -115,5 +115,5 @@ monitor:
 # “At minute 0 past hour 12 and 23.” e.g. 12:00, 23:00 # https://crontab.guru/
 CRONINTERVAL:=0 12,23 * * *
 CRONCMD:=. $(shell echo $$HOME)/.bash_profile; cd $(shell pwd); make monitor LOG=1 >/dev/null 2>&1
-cron_cmd:
-	@echo "$(CRONCMD)"
+crontab:
+	@echo "$(CRONINTERVAL) $(CRONCMD)"
