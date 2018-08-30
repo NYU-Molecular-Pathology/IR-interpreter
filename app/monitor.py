@@ -4,7 +4,7 @@
 Module for monitoring a local directory and running the program based on discovered inputs
 """
 import os
-import template
+import report
 import argparse
 import rsync
 
@@ -56,10 +56,10 @@ def make_reports(inputDir, overwrite = False):
         if os.path.exists(output):
             if overwrite is True:
                 print(">>> Overwriting output: {0}".format(output))
-                template.make_report(input = input, output = output)
+                report.make_report(input = input, output = output)
         else:
             print(">>> Generating output: {0}".format(output))
-            template.make_report(input = input, output = output)
+            report.make_report(input = input, output = output)
 
 
 def main(**kwargs):

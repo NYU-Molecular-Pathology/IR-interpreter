@@ -80,7 +80,7 @@ test:
 # run a demo for example report output
 demo:
 	# app/IR.py
-	app/template.py
+	app/report.py
 
 # enter debug console
 # t.records[0].interpretations[0]
