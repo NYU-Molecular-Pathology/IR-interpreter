@@ -32,8 +32,14 @@ cd IR-interpreter
 
 The included `conda` recipe can install all required dependencies in a fresh conda installation in the current directory:
 
+(Linux)
 ```
-make conda
+make conda-install
+```
+
+(macOS)
+```
+make conda-install CONDASH=Miniconda3-4.5.4-MacOSX-x86_64.sh
 ```
 
 - by default, all commands invoked through the included `Makefile` use this conda installation
