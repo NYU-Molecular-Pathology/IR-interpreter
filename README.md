@@ -50,6 +50,14 @@ app/report.py /path/to/Ion_Reporter_Sample.tsv
 
 By default, output will be written to a file with the same path with the extension '.html'.
 
+### Filter by Tumor and Tissue type
+
+You can provide a tumor or tissue type to filter interpretations by including extra arguments to the script:
+
+```
+app/report.py /path/to/Ion_Reporter_Sample.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
+```
+
 An example can be run with the following command:
 
 ```
@@ -69,6 +77,26 @@ It can also be combined with `rsync` to first copy files from a directory on a r
 ```
 app/monitor.py /path/to/inputDir --rsync --rsync-config /path/to/rsync.json
 ```
+
+### Filter by Tumor and Tissue type
+
+You can enable interpretation filtering by tumor and tissue type by including a JSON formatted file with the same name adjacent to your input .tsv file. For example:
+
+```
+$ ls -1
+Ion_Reporter_Sample.json
+Ion_Reporter_Sample.tsv
+
+$ cat Ion_Reporter_Sample.json
+{
+    "tumorType": "Adenocarcinoma",
+    "tissueType": "Lung"
+}
+```
+
+The JSON file (`Ion_Reporter_Sample.json` in this example) will be automatically detected by the monitor script and used to update filter criteria for interpretation output.
+
+### Automation
 
 `cron` can be used to run this feature automatically. A sample `crontab` entry can be generated with
 
