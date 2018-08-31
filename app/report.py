@@ -17,7 +17,7 @@ environment = Environment(
     )
 template = environment.get_template('report.html')
 
-def make_report(input, output = None):
+def make_report(input, output = None, params = None):
     """
     Makes an HTML report out of an input file.
 
@@ -34,9 +34,11 @@ def make_report(input, output = None):
     """
     if not output:
         output = os.path.splitext(input)[0] + ".html"
+    if not params:
+        params = {}
 
     # initialize objects for parsing table and database
-    IRtable = ir.IRTable(source = input)
+    IRtable = ir.IRTable(source = input, params = params)
     db = pmkb.PMKB()
     IRtable.lookup_all_interpretations(db = db)
 
@@ -53,7 +55,11 @@ def main(**kwargs):
     """
     input = kwargs.pop('input')[0]
     output = kwargs.pop('output', None)
-    make_report(input = input, output = output)
+    tumorType = kwargs.pop('tumorType', None)
+    tissueType = kwargs.pop('tissueType', None)
+    params = {'tumorType': tumorType, 'tissueType': tissueType}
+
+    make_report(input = input, output = output, params = params)
 
 def parse():
     """
@@ -62,6 +68,8 @@ def parse():
     parser = argparse.ArgumentParser(description='Creates a report from an input .tsv file')
     parser.add_argument('input', nargs=1, help="Ion Reporter .tsv table input file")
     parser.add_argument("-o", "--output", default = None, dest = 'output', help="Output file path")
+    parser.add_argument("--tumorType", default = None, dest = 'tumorType', help="Tumor type to use for table")
+    parser.add_argument("--tissueType", default = None, dest = 'tissueType', help="Tissue type to use for table")
 
     args = parser.parse_args()
 

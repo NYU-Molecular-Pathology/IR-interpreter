@@ -11,3 +11,4 @@ test
 .DS_Store
 logs/
 logs/*
+test*

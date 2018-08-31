@@ -80,8 +80,10 @@ test:
 # run a demo for example report output
 demo:
 	# app/IR.py
-	app/report.py example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv
+	app/report.py example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
 
+# Adenocarcinoma
+# Lung
 # enter debug console
 # t.records[0].interpretations[0]
 # t.records[5].interpretations

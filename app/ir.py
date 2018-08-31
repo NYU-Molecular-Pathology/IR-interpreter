@@ -9,12 +9,30 @@ from collections import OrderedDict
 class IRTable(object):
     """
     Class for parsing the .tsv formatted data exported from Ion Reporter web interface
+
+    Parameters
+    ----------
+    source: str
+        path to .tsv file to read in.
+    params: dict
+        dictionary of extra meta data parameters; 'tumorType', 'tissueType'
     """
-    def __init__(self, source):
+    def __init__(self, source, params = None):
         self.source = source
         self.table = self.load_table(source = self.source)
-        self.records = self.get_records(data = self.table)
         self.header = self.load_header(source = self.source)
+        self.params = {}
+        if params:
+            self.params.update(params)
+        if 'tumorType' in self.params:
+            self.table['TumorType'] = self.params['tumorType']
+        else:
+            self.table['TumorType'] = None
+        if 'tissueType' in self.params:
+            self.table['TissueType'] = self.params['tissueType']
+        else:
+            self.table['TissueType'] = None
+        self.records = self.get_records(data = self.table, params = self.params)
 
     def load_table(self, source):
         """
@@ -42,7 +60,7 @@ class IRTable(object):
         df = df.reset_index()
         return(df)
 
-    def get_records(self, data):
+    def get_records(self, data, params):
         """
         Creates a list of IRRecord objects for each entry in the table
 
@@ -59,7 +77,7 @@ class IRTable(object):
         # convert dataframe to list of dictionaries
         records = data.to_dict(orient='records')
         # initialize IRRecord objects
-        ir_records = [ IRRecord(record) for record in records ]
+        ir_records = [ IRRecord(data = record, **params) for record in records ]
         return(ir_records)
 
     def load_header(self, source, pattern = '##'):
@@ -216,7 +234,7 @@ def demo(IRtable = None, PMKBdb = None):
         PMKBdb = "db/pmkb.db"
 
     # load demo IR table
-    table = IRTable(source = IRtable)
+    table = IRTable(source = IRtable, params = {'tumorType': 'Urothelial Carcinoma', 'tissueType': None})
 
     # get interpretations from database
     # db = pmkb.PMKB(source = PMKBdb)

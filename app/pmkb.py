@@ -22,7 +22,7 @@ class PMKB(object):
         Parameters
         ----------
         params: dict
-            a dictionary of fields for querying.
+            a dictionary of fields for querying. Must include key 'genes' with a list of gene IDs to match
 
 
         Returns
@@ -160,6 +160,7 @@ def demo():
     tumorType = 'Urothelial Carcinoma'
     tissueType = 'Kidney'
     params = {'genes': genes, 'tumorType': tumorType, 'tissueType': tissueType}
+    # params = {'genes': genes, 'tumorType': 'Urothelial Carcinoma', 'tissueType': None}
     i = p.query(params)
     return((p, i))
 
