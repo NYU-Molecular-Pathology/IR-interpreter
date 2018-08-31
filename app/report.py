@@ -46,7 +46,7 @@ def make_report(input, output = None, params = None):
     parsed = template.render(IRtable = IRtable)
 
     # write output
-    with open(output, "w") as f:
+    with open(output, "w", encoding = 'utf-16') as f:
         f.write(parsed)
 
 def main(**kwargs):
