@@ -234,7 +234,7 @@ def demo(IRtable = None, PMKBdb = None):
         PMKBdb = "db/pmkb.db"
 
     # load demo IR table
-    table = IRTable(source = IRtable, params = {'tumorType': 'Urothelial Carcinoma', 'tissueType': None})
+    table = IRTable(source = IRtable, params = {'tumorType': 'Adenocarcinoma', 'tissueType': 'Lung'})
 
     # get interpretations from database
     # db = pmkb.PMKB(source = PMKBdb)

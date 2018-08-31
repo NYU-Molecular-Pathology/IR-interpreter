@@ -103,7 +103,7 @@ debug:
 
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
-EP:=--rsync --rsync-config "$(RSYNC_CONFIG)"
+EP:=--rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite
 LOG:=
 monitor:
 	@if [ -z "$(LOG)" ]; then \

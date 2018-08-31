@@ -7,6 +7,7 @@ import os
 import report
 import argparse
 import rsync
+import json
 
 def find_input_IR_tsvs(inputDir):
     """
@@ -52,14 +53,24 @@ def make_reports(inputDir, overwrite = False):
         path to directory to search for input files
     """
     for input in find_input_IR_tsvs(inputDir):
-        output = os.path.splitext(input)[0] + ".html"
+        params = {}
+        input_basename = os.path.splitext(input)[0]
+
+        # check for params files
+        input_json = input_basename + ".json"
+        if os.path.exists(input_json):
+            with open(input_json) as f:
+                params.update(json.load(f))
+
+        # check for output already exists
+        output = input_basename + ".html"
         if os.path.exists(output):
             if overwrite is True:
                 print(">>> Overwriting output: {0}".format(output))
-                report.make_report(input = input, output = output)
+                report.make_report(input = input, output = output, params = params)
         else:
             print(">>> Generating output: {0}".format(output))
-            report.make_report(input = input, output = output)
+            report.make_report(input = input, output = output, params = params)
 
 
 def main(**kwargs):
