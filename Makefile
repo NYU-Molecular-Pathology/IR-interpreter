@@ -92,7 +92,7 @@ demo:
 
 # enter CLI debugger
 debug:
-	python -c 'import app.pmkb as pmkb; import app.ir as ir; import app.dev as dev; p, i = pmkb.demo(); t = ir.demo(); dev.debugger(globals().copy())'
+	python -c 'import interpreter.pmkb as pmkb; import interpreter.ir as ir; import interpreter.dev as dev; p, i = pmkb.demo(); t = ir.demo(); dev.debugger(globals().copy())'
 
 # Adenocarcinoma
 # Lung
@@ -136,11 +136,10 @@ ifeq ($(UNAME), Darwin)
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 endif
-
-ifeq ($(UNAME), Linux)
-export LC_ALL=C.UTF-8
-export LANG=C.UTF-8
-endif
+# ifeq ($(UNAME), Linux)
+# export LC_ALL=C.UTF-8
+# export LANG=C.UTF-8
+# endif
 run:
 	export FLASK_APP="interpreter/webapp" ; \
 	export FLASK_ENV=development ; \
