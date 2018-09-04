@@ -75,12 +75,12 @@ setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) 
 # ~~~~~ ~~~~~ ~~~~~ #
 # run the unit test suite
 test:
-	app/test.py
+	interpreter/test.py
 
 # run a demo for example report output
 demo:
-	# app/IR.py
-	app/report.py example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
+	# interpreter/IR.py
+	interpreter/report.py example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
 
 # Adenocarcinoma
 # Lung
@@ -107,12 +107,12 @@ EP:=--rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite
 LOG:=
 monitor:
 	@if [ -z "$(LOG)" ]; then \
-	app/monitor.py "$(MONITOR_DIR)" $(EP) ; \
+	interpreter/monitor.py "$(MONITOR_DIR)" $(EP) ; \
 	else mkdir -p logs; \
 	logfile="logs/monitor.$$(date '+%Y-%m-%d-%H-%M-%S').log" ; \
-	app/monitor.py "$(MONITOR_DIR)" $(EP) 2>&1 > "$${logfile}" ; \
+	interpreter/monitor.py "$(MONITOR_DIR)" $(EP) 2>&1 > "$${logfile}" ; \
 	fi
-# app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
+# interpreter/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
 
 # “At minute 0 past hour 12 and 23.” e.g. 12:00, 23:00 # https://crontab.guru/
 CRONINTERVAL:=0 12,23 * * *

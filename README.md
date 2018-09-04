@@ -1,13 +1,13 @@
 [![Build Status](https://travis-ci.org/NYU-Molecular-Pathology/IR-interpreter.svg?branch=master)](https://travis-ci.org/NYU-Molecular-Pathology/IR-interpreter)
 
 # IR-interpreter
-Clinical interpreter for Ion Reporter and Oncomine analysis results 
+Clinical interpreter for Ion Reporter and Oncomine analysis results
 
 ## Overview
 
-The [Thermo Fisher S5](https://www.thermofisher.com/us/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-workflow/ion-torrent-next-generation-sequencing-run-sequence/ion-s5-ngs-targeted-sequencing.html) Next-Gen Sequencing platform can be used for the identification of structural variants, mutations, and other abnormalities in DNA and RNA samples using on-board Ion Reporter (IR) data analysis software suite. However, Ion Reporter does not include clinical interpretation of variants, which is required for clinicians to sign out patient cases processed on the platform. 
+The [Thermo Fisher S5](https://www.thermofisher.com/us/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-workflow/ion-torrent-next-generation-sequencing-run-sequence/ion-s5-ngs-targeted-sequencing.html) Next-Gen Sequencing platform can be used for the identification of structural variants, mutations, and other abnormalities in DNA and RNA samples using on-board Ion Reporter (IR) data analysis software suite. However, Ion Reporter does not include clinical interpretation of variants, which is required for clinicians to sign out patient cases processed on the platform.
 
-The [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu/) ([PMKB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/)) offers curated interpretations of many such variants which can be used for this purpose. Users can manually enter their desired variant into the PMKB website, manually look up entries in the PMKB [Excel sheet](https://pmkb.weill.cornell.edu/therapies/download.xlsx) available for download, or may use an API to query entries programmatically. While the latter option would be most ideal for a scripted solution, API usage requires the inclusion of Tumor and Tissue Type parameters, which are not always available for the program-user. 
+The [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu/) ([PMKB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5391733/)) offers curated interpretations of many such variants which can be used for this purpose. Users can manually enter their desired variant into the PMKB website, manually look up entries in the PMKB [Excel sheet](https://pmkb.weill.cornell.edu/therapies/download.xlsx) available for download, or may use an API to query entries programmatically. While the latter option would be most ideal for a scripted solution, API usage requires the inclusion of Tumor and Tissue Type parameters, which are not always available for the program-user.
 
 `IR-interpreter` provides an automated offline solution to this using the following method(s):
 
@@ -51,7 +51,7 @@ If you would prefer to manage dependency installation yourself, you can install 
 You can make a report from an Ion Reporter .tsv export file with the following command:
 
 ```
-app/report.py /path/to/Ion_Reporter_Sample.tsv
+interpreter/report.py /path/to/Ion_Reporter_Sample.tsv
 ```
 
 By default, output will be written to a file with the same path with the extension '.html'.
@@ -61,7 +61,7 @@ By default, output will be written to a file with the same path with the extensi
 You can provide a tumor or tissue type to filter interpretations by including extra arguments to the script:
 
 ```
-app/report.py /path/to/Ion_Reporter_Sample.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
+interpreter/report.py /path/to/Ion_Reporter_Sample.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
 ```
 
 An example can be run with the following command:
@@ -75,13 +75,13 @@ make demo
 `IR-interpreter` can automatically process all input .tsv files in a directory with the included `monitor.py` module:
 
 ```
-app/monitor.py /path/to/inputDir
+interpreter/monitor.py /path/to/inputDir
 ```
 
 It can also be combined with `rsync` to first copy files from a directory on a remote server, process all inputs, then copy results back. A JSON formatted config file should be used for this (example `.rsync.json` included):
 
 ```
-app/monitor.py /path/to/inputDir --rsync --rsync-config /path/to/rsync.json
+interpreter/monitor.py /path/to/inputDir --rsync --rsync-config /path/to/rsync.json
 ```
 
 ### Filter by Tumor and Tissue type
