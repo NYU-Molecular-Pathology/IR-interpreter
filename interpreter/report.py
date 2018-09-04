@@ -17,7 +17,7 @@ environment = Environment(
     )
 template = environment.get_template('report.html')
 
-def make_report(input, output = None, params = None):
+def make_report(input, output = None, params = None, output_type = "file"):
     """
     Makes an HTML report out of an input file.
 
@@ -46,8 +46,12 @@ def make_report(input, output = None, params = None):
     parsed = template.render(IRtable = IRtable)
 
     # write output
-    with open(output, "w", encoding = 'utf-16') as f:
-        f.write(parsed)
+    if output_type == 'file':
+        with open(output, "w", encoding = 'utf-16') as f:
+            f.write(parsed)
+    elif output_type == 'html':
+        return(parsed)
+
 
 def main(**kwargs):
     """
