@@ -12,3 +12,5 @@ test
 logs/
 logs/*
 test*
+uploads/*
+*/uploads/*
