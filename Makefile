@@ -19,10 +19,10 @@ conda:
 	rm -f "$(CONDASH)"
 
 conda-search: conda
-	conda search '*jinja*'
+	conda search '*flask*'
 
 conda-install: conda
-	conda install -y pandas=0.23.4 'xlrd>=0.9.0' jinja2=2.10
+	conda install -y pandas=0.23.4 'xlrd>=0.9.0' jinja2=2.10 flask=1.0.2
 
 test-conda:
 	python -c 'import sys,pandas; print(sys.version); print(pandas.__version__)'
