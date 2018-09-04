@@ -19,10 +19,10 @@ conda:
 	rm -f "$(CONDASH)"
 
 conda-search: conda
-	conda search '*jinja*'
+	conda search '*flask*'
 
 conda-install: conda
-	conda install -y pandas=0.23.4 'xlrd>=0.9.0' jinja2=2.10
+	conda install -y pandas=0.23.4 'xlrd>=0.9.0' jinja2=2.10 flask=1.0.2
 
 test-conda:
 	python -c 'import sys,pandas; print(sys.version); print(pandas.__version__)'
@@ -72,15 +72,19 @@ $(PMKB_TUMORFILE): $(PMKB_XLSX) conda
 setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) $(PMKB_TUMORFILE)
 .PHONY: setup-db
 
-# ~~~~~ ~~~~~ ~~~~~ #
+# ~~~~~ RUN PROGRAM ~~~~~ #
 # run the unit test suite
 test:
-	app/test.py
+	interpreter/test.py
 
 # run a demo for example report output
 demo:
-	# app/IR.py
-	app/report.py example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
+	# interpreter/IR.py
+	interpreter/report.py example-data/Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793-2018-08-21-15-00-11200.tsv --tumorType "Adenocarcinoma" --tissueType "Lung"
+
+# enter CLI debugger
+debug:
+	python -c 'import app.pmkb as pmkb; import app.ir as ir; import app.dev as dev; p, i = pmkb.demo(); t = ir.demo(); dev.debugger(globals().copy())'
 
 # Adenocarcinoma
 # Lung
@@ -91,31 +95,47 @@ demo:
 # p.get_sources(genes = ['NRAS'])
 # genes = ['NRAS', 'EGFR']
 # p.get_gene_sources(genes)
-debug:
-	python -c 'import app.pmkb as pmkb; import app.ir as ir; import app.dev as dev; p, i = pmkb.demo(); t = ir.demo(); dev.debugger(globals().copy())'
-
 # t.lookup_all_interpretations(db = p)
 # python -c 'from app.dev import debugger; from app.IR import demo; t = demo(); debugger(globals().copy())'
 # python -c 'from app.dev import debugger; from app.PMKB import demo; p, i = demo(); debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); p, i = app.PMKB.demo(); t = app.IR.demo(); app.dev.debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); print(dir(app))'
 
-
+# directory monitor script
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
 EP:=--rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite
 LOG:=
 monitor:
 	@if [ -z "$(LOG)" ]; then \
-	app/monitor.py "$(MONITOR_DIR)" $(EP) ; \
+	interpreter/monitor.py "$(MONITOR_DIR)" $(EP) ; \
 	else mkdir -p logs; \
 	logfile="logs/monitor.$$(date '+%Y-%m-%d-%H-%M-%S').log" ; \
-	app/monitor.py "$(MONITOR_DIR)" $(EP) 2>&1 > "$${logfile}" ; \
+	interpreter/monitor.py "$(MONITOR_DIR)" $(EP) 2>&1 > "$${logfile}" ; \
 	fi
-# app/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
+# interpreter/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
 
+# make crontab entry
 # “At minute 0 past hour 12 and 23.” e.g. 12:00, 23:00 # https://crontab.guru/
 CRONINTERVAL:=0 12,23 * * *
 CRONCMD:=. $(shell echo $$HOME)/.bash_profile; cd $(shell pwd); make monitor LOG=1 >/dev/null 2>&1
 crontab:
 	@echo "$(CRONINTERVAL) $(CRONCMD)"
+
+# run the Flask app
+# for Click compatibility with Python3... ;
+UNAME:=$(shell uname)
+ifeq ($(UNAME), Darwin)
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+endif
+
+ifeq ($(UNAME), Linux)
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+endif
+
+run:
+	export FLASK_APP="app" ; \
+	export FLASK_ENV=development ; \
+	flask run
