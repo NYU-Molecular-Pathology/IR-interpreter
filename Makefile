@@ -1,4 +1,5 @@
 SHELL:=/bin/bash
+UNAME:=$(shell uname)
 SCRIPT_DIR:=scripts
 PATH:=$(CURDIR)/conda/bin:$(SCRIPT_DIR):$(PATH)
 unexport PYTHONPATH
@@ -10,7 +11,14 @@ setup: conda-install setup-db
 # ~~~~~ Setup Conda Python 3 ~~~~~ #
 # Python 3.6.5 |Anaconda, Inc.| (default, Apr 29 2018, 16:14:56)
 # [GCC 7.2.0]
+ifeq ($(UNAME), Darwin)
+CONDASH:=Miniconda3-4.5.4-MacOSX-x86_64.sh
+endif
+
+ifeq ($(UNAME), Linux)
 CONDASH:=Miniconda3-4.5.4-Linux-x86_64.sh
+endif
+
 CONDAURL:=https://repo.continuum.io/miniconda/$(CONDASH)
 conda:
 	@echo ">>> Setting up conda..."
@@ -123,8 +131,7 @@ crontab:
 	@echo "$(CRONINTERVAL) $(CRONCMD)"
 
 # run the Flask app
-# for Click compatibility with Python3... ;
-UNAME:=$(shell uname)
+# for Click compatibility with Python3...
 ifeq ($(UNAME), Darwin)
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -134,8 +141,7 @@ ifeq ($(UNAME), Linux)
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
 endif
-
 run:
-	export FLASK_APP="app" ; \
+	export FLASK_APP="interpreter/webapp" ; \
 	export FLASK_ENV=development ; \
 	flask run

@@ -12,3 +12,4 @@ test
 logs/
 logs/*
 test*
+interpreter/webapp/uploads/*

@@ -5,9 +5,10 @@ Module for creating reports from Ion Reporter exported .tsv file
 """
 import os
 from jinja2 import FileSystemLoader, Environment, select_autoescape
-import ir
-import pmkb
 import argparse
+if __name__ != '__main__':
+    import interpreter.ir as ir
+    import interpreter.pmkb as pmkb
 
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
 loader = FileSystemLoader(template_dir)
@@ -17,7 +18,7 @@ environment = Environment(
     )
 template = environment.get_template('report.html')
 
-def make_report(input, output = None, params = None):
+def make_report(input, output = None, params = None, output_type = "file"):
     """
     Makes an HTML report out of an input file.
 
@@ -45,9 +46,12 @@ def make_report(input, output = None, params = None):
     #  render output
     parsed = template.render(IRtable = IRtable)
 
-    # write output
-    with open(output, "w", encoding = 'utf-16') as f:
-        f.write(parsed)
+    if output_type == 'file':
+        # write output
+        with open(output, "w", encoding = 'utf-16') as f:
+            f.write(parsed)
+    elif output_type == 'html':
+        return(parsed)
 
 def main(**kwargs):
     """
@@ -76,4 +80,6 @@ def parse():
     main(**vars(args))
 
 if __name__ == '__main__':
+    import ir
+    import pmkb
     parse()
