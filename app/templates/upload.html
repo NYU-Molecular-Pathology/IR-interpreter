@@ -1,0 +1,11 @@
+{% block content %}
+<h1>Upload Ion Reporter .tsv file</h1>
+<form method=post enctype=multipart/form-data action=/upload target=output>
+  <input type=file name=file>
+  <input type=submit value=Upload>
+</form>
+<div>
+     <!-- <iframe src='about:blank', name="start", style="width: 0; height: 0; border: 0; border: none; position: absolute;"></iframe> -->
+      <iframe src='about:blank', name="output", style="width: 100%"></iframe>
+</div>
+{% endblock %}
