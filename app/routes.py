@@ -7,7 +7,7 @@ import sys
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 from app import app
-
+# from app import interpreter
 # import the IR interpreter library from parent repo dir
 # scriptdir = os.path.dirname(os.path.realpath(__file__)) # this script's dir
 # parentdir = os.path.dirname(scriptdir) # this script's parent dir
@@ -59,5 +59,6 @@ def upload():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             print(filepath)
             file.save(filepath)
+            return('')
             # html = interpreter.report.make_report(input = filepath, params = None, output_type = "html")
             # return(html)

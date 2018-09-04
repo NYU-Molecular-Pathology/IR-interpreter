@@ -5,8 +5,6 @@ Module for creating reports from Ion Reporter exported .tsv file
 """
 import os
 from jinja2 import FileSystemLoader, Environment, select_autoescape
-import ir
-import pmkb
 import argparse
 
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
@@ -80,4 +78,6 @@ def parse():
     main(**vars(args))
 
 if __name__ == '__main__':
+    import ir
+    import pmkb
     parse()
