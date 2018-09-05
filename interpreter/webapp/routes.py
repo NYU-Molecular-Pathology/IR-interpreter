@@ -71,5 +71,13 @@ def upload():
         # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         # file.save(filepath)
         # html = report.make_report(input = filepath, params = None, output_type = "html")
-        html = report.make_report(input = file.stream._file, output = False, params = req_params, output_type = "html")
-        return(html)
+
+        # operating on in-memory file only
+        try:
+            html = report.make_report(input = file.stream._file, output = False, params = req_params, output_type = "html")
+            return(html)
+        except:
+            print("Upload file could not be parsed")
+            return("Upload file could not be parsed")
+        finally:
+            file.stream._file.close()
