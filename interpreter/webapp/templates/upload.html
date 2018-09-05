@@ -7,7 +7,7 @@
     <option selected disabled>Tissue Type</option>
     <option value="None">None</option>
     {% for tissueType in tissueTypes %}
-    <option value="tissueType">{{ tissueType }}</option>
+    <option value="{{ tissueType }}">{{ tissueType }}</option>
     {% endfor %}
   </select>
 
@@ -15,7 +15,7 @@
     <option selected disabled>Tumor Type</option>
     <option value="None">None</option>
     {% for tumorType in tumorTypes %}
-    <option value="tumorType">{{ tumorType }}</option>
+    <option value="{{ tumorType }}">{{ tumorType }}</option>
     {% endfor %}
   </select>
 

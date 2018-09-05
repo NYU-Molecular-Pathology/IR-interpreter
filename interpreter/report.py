@@ -27,7 +27,7 @@ def make_report(input, output = None, params = None, output_type = "file"):
     input: str
         path to input .tsv file
     output: str
-        path to output .html to create
+        path to output .html to create; use `None` to auto-generate output file, or `False` to disable file output
 
     Notes
     -----

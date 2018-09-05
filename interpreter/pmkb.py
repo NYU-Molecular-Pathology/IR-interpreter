@@ -145,6 +145,12 @@ class PMKB(object):
 
     def get_tumorTypes(self):
         """
+        Returns a list of the Tumor Types in the database
+
+        Returns
+        -------
+        list
+            a list of character strings representing tumor types in the database
         """
         cur = self.conn.cursor()
         sql = "SELECT DISTINCT TumorType FROM entries"
@@ -154,6 +160,12 @@ class PMKB(object):
 
     def get_tissueTypes(self):
         """
+        Returns a list of the Tissue Types in the database
+
+        Returns
+        -------
+        list
+            a list of character strings representing tissue types in the database
         """
         cur = self.conn.cursor()
         sql = "SELECT DISTINCT TissueType FROM entries"

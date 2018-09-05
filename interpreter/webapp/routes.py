@@ -39,12 +39,26 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    # get tumor and tissue types from the form
+    req_tissueType = request.form['tissueType']
+    req_tumorType = request.form['tumorType']
+
+    # validate the params provided
+    if req_tissueType not in tissueTypes:
+        req_tissueType = None
+    if req_tumorType not in tumorTypes:
+        req_tumorType = None
+    # set up params for db query
+    req_params = {
+    'tissueType': req_tissueType,
+    'tumorType': req_tumorType
+    }
+
     # check if the post request has the file part
     if 'file' not in request.files:
         return('No file provided')
     file = request.files['file']
-    # if user does not select file, browser also
-    # submit an empty part without filename
+    # if user does not select file, browser also can submit an empty part without filename
     if file.filename == '':
         return('No file provided')
     # check for invalid filetype
@@ -56,6 +70,7 @@ def upload():
         # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         # file.save(filepath)
         # html = report.make_report(input = filepath, params = None, output_type = "html")
+
         # # operating on in-memory file only
-        html = report.make_report(input = file.stream._file, output = False, params = None, output_type = "html")
+        html = report.make_report(input = file.stream._file, output = False, params = req_params, output_type = "html")
         return(html)
