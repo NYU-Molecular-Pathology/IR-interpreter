@@ -2,6 +2,23 @@
 <h1>Upload Ion Reporter .tsv file</h1>
 <form method=post enctype=multipart/form-data action=/upload target=output>
   <input type=file name=file>
+
+  <select name="tissueType">
+    <option selected disabled>Tissue Type</option>
+    <option value="None">None</option>
+    {% for tissueType in tissueTypes %}
+    <option value="tissueType">{{ tissueType }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="tumorType">
+    <option selected disabled>Tumor Type</option>
+    <option value="None">None</option>
+    {% for tumorType in tumorTypes %}
+    <option value="tumorType">{{ tumorType }}</option>
+    {% endfor %}
+  </select>
+
   <input type=submit value=Upload>
 </form>
 <div>

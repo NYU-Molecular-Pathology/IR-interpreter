@@ -35,7 +35,7 @@ tumorTypes = db.get_tumorTypes()
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    return(render_template('index.html'))
+    return(render_template('index.html', tissueTypes = tissueTypes, tumorTypes = tumorTypes))
 
 @app.route('/upload', methods=['POST'])
 def upload():
