@@ -143,6 +143,24 @@ class PMKB(object):
         interpretations = [ dict(row) for row in cur.execute(sql, sources).fetchall() ]
         return(interpretations)
 
+    def get_tumorTypes(self):
+        """
+        """
+        cur = self.conn.cursor()
+        sql = "SELECT DISTINCT TumorType FROM entries"
+        tumorTypes = list(set([ dict(row)['TumorType'] for row in cur.execute(sql).fetchall() ]))
+        tumorTypes.sort()
+        return(tumorTypes)
+
+    def get_tissueTypes(self):
+        """
+        """
+        cur = self.conn.cursor()
+        sql = "SELECT DISTINCT TissueType FROM entries"
+        tissueTypes = list(set([ dict(row)['TissueType'] for row in cur.execute(sql).fetchall() ]))
+        tissueTypes.sort()
+        return(tissueTypes)
+
 def demo():
     """
     A demo of the database API functionality.
