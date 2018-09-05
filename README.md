@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/NYU-Molecular-Pathology/IR-interpreter.svg?branch=master)](https://travis-ci.org/NYU-Molecular-Pathology/IR-interpreter)
 
+- __Demo site available [here](https://ir-interpreter.herokuapp.com/)__ (not secured for clinical usage; for demonstration purpose only!)
+
 # IR-interpreter
 Clinical interpreter for Ion Reporter and Oncomine analysis results
 
