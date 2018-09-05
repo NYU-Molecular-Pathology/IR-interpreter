@@ -33,7 +33,7 @@ def make_report(input, output = None, params = None, output_type = "file"):
     -----
     Output file will be overwritten if it already exists.
     """
-    if not output:
+    if output is None:
         output = os.path.splitext(input)[0] + ".html"
     if not params:
         params = {}

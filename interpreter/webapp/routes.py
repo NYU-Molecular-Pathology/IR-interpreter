@@ -38,11 +38,15 @@ def upload():
     # submit an empty part without filename
     if file.filename == '':
         return('No file provided')
+    # check for invalid filetype
     if file and not allowed_file(file.filename):
         return('Invalid file type selected; types allowed: {0}'.format(ALLOWED_EXTENSIONS))
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        html = report.make_report(input = filepath, params = None, output_type = "html")
+        # # writing file to temp location on disk
+        # filename = secure_filename(file.filename)
+        # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # file.save(filepath)
+        # html = report.make_report(input = filepath, params = None, output_type = "html")
+        # # operating on in-memory file only
+        html = report.make_report(input = file.stream._file, output = False, params = None, output_type = "html")
         return(html)

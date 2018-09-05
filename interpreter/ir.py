@@ -20,7 +20,7 @@ class IRTable(object):
     def __init__(self, source, params = None):
         self.source = source
         self.table = self.load_table(source = self.source)
-        self.header = self.load_header(source = self.source)
+        # self.header = self.load_header(source = self.source)
         self.params = {}
         if params:
             self.params.update(params)
@@ -99,6 +99,7 @@ class IRTable(object):
         Todo
         ----
         Update this to parse the header lines into a list of dictionaries, or a single dict
+        Update this to work with ``tempfile.SpooledTemporaryFile`` 
         """
         header_lines = []
         with open(source) as f:
