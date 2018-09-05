@@ -32,14 +32,14 @@ def index():
 def upload():
     # check if the post request has the file part
     if 'file' not in request.files:
-        return('No file part')
+        return('No file provided')
     file = request.files['file']
     # if user does not select file, browser also
     # submit an empty part without filename
     if file.filename == '':
-        return('No selected file')
+        return('No file provided')
     if file and not allowed_file(file.filename):
-        return('Invalid file type selected')
+        return('Invalid file type selected; types allowed: {0}'.format(ALLOWED_EXTENSIONS))
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
