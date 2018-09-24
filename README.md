@@ -34,19 +34,23 @@ cd IR-interpreter
 
 The included `conda` recipe can install all required dependencies in a fresh conda installation in the current directory:
 
-(Linux)
 ```
 make conda-install
 ```
 
-(macOS)
-```
-make conda-install CONDASH=Miniconda3-4.5.4-MacOSX-x86_64.sh
-```
-
 - by default, all commands invoked through the included `Makefile` use this conda installation
 
+- configurations for macOS and Linux are supported at this step
+
 If you would prefer to manage dependency installation yourself, you can install required libraries from the included `requirements.txt` file.
+
+## Run Web App
+
+You can start the web app with the Flask server with the following command:
+
+```
+make run
+```
 
 ## Make a Report
 
@@ -122,4 +126,4 @@ Timestamped logs will be deposited in the `logs` subdir in this directory.
 
 # Software
 
-- Python 3.6+
+- Python 3.6+ (conda installation included for macOS and Linux)
