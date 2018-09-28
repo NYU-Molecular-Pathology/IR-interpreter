@@ -81,6 +81,9 @@ setup-db: $(PMKB_DB) $(PMKB_ENTRIES) $(PMKB_INTERPRETATIONS) $(PMKB_TISSUEFILE) 
 .PHONY: setup-db
 
 # ~~~~~ RUN PROGRAM ~~~~~ #
+TIMESTAMP:=$(shell date +"%Y-%m-%d-%H-%M-%S")
+LOGDIR=logs
+LOGGING:=
 # run the unit test suite
 test:
 	interpreter/test.py
@@ -113,12 +116,11 @@ debug:
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
 EP:=--rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite
-LOG:=
 monitor:
-	@if [ -z "$(LOG)" ]; then \
+	@if [ -z "$(LOGGING)" ]; then \
 	interpreter/monitor.py "$(MONITOR_DIR)" $(EP) ; \
-	else mkdir -p logs; \
-	logfile="logs/monitor.$$(date '+%Y-%m-%d-%H-%M-%S').log" ; \
+	else mkdir -p "./$(LOGDIR)"; \
+	logfile="./$(LOGDIR)/monitor.$(TIMESTAMP).log" ; \
 	interpreter/monitor.py "$(MONITOR_DIR)" $(EP) 2>&1 > "$${logfile}" ; \
 	fi
 # interpreter/monitor.py "$(MONITOR_DIR)" --rsync --rsync-config "$(RSYNC_CONFIG)" --overwrite --remove-source
@@ -126,7 +128,7 @@ monitor:
 # make crontab entry
 # “At minute 0 past hour 12 and 23.” e.g. 12:00, 23:00 # https://crontab.guru/
 CRONINTERVAL:=0 12,23 * * *
-CRONCMD:=. $(shell echo $$HOME)/.bash_profile; cd $(shell pwd); make monitor LOG=1 >/dev/null 2>&1
+CRONCMD:=. $(shell echo $$HOME)/.bash_profile; cd $(shell pwd); make monitor LOGGING=1 >/dev/null 2>&1
 crontab:
 	@echo "$(CRONINTERVAL) $(CRONCMD)"
 
@@ -136,11 +138,33 @@ ifeq ($(UNAME), Darwin)
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 endif
-# ifeq ($(UNAME), Linux)
+ifeq ($(UNAME), Linux)
 # export LC_ALL=C.UTF-8
 # export LANG=C.UTF-8
-# endif
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+endif
 run:
+	which python
 	export FLASK_APP="interpreter/webapp" ; \
 	export FLASK_ENV=development ; \
 	flask run
+
+# deploy the app on production server
+PORT:=
+check-port:
+	@[ -z "$(PORT)" ] && echo ">>> No PORT passed, exiting..." && exit 1 || :
+deploy:
+	@$(MAKE) check-port
+	mkdir -p "./$(LOGDIR)" ; \
+	logfile="./$(LOGDIR)/app.$(TIMESTAMP).log" ; \
+	export FLASK_APP="interpreter/webapp" ; \
+	flask run --port="$(PORT)" 2>&1 > "$${logfile}" & appProcess="$$!" ; \
+	echo ">>> Running app on port $(PORT), process ID $${appProcess}, logging to $${logfile}" 
+# ;\
+# wait $${appProcess}
+
+
+
+
+
