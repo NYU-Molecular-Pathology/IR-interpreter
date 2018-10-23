@@ -10,7 +10,7 @@ table {
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
-tr:nth-child(odd) {background-color: #f2f2f2;} 
+tr:nth-child(odd) {background-color: #f2f2f2;}
 th, td {
     padding: 15px;
     text-align: left;
@@ -55,6 +55,16 @@ th, td {
         <td>{{ record.data['TissueType'] }}</td>
         <td>{{ record.data['Row'] + 1 }}</td>
       </tr>
+      <tr>
+          <td>
+            Gene Variant: {{ record.data['Genes'] }} {{ record.data['Coding'] }} {{ record.data['Amino Acid Change'] }}<br>
+            Type of Variant: {{ record.data['Type'] }}<br>
+            COSMIC/NCBI ID: {{ record.data['COSMIC/NCBI'] }}<br>
+            Variant Allele Frequency: {{ record.data['% Frequency'] }}<br>
+            Read Counts: {{ record.data['Read Counts'] }}<br>
+            Read Coverage: {{ record.data['Coverage'] }}<br>
+          </td>
+      </tr>
     </table>
 
     <table style="width:100%;", class="pmkbtable">
@@ -82,11 +92,11 @@ th, td {
       {% else %}
       <td>No interpretations found.</td>
       {% endfor %}
-    </table> 
+    </table>
     <br>
 
     {% endfor %}
   </div>
-    
+
 </body>
 </html>
