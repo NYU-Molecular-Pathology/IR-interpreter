@@ -163,12 +163,9 @@ deploy:
 	mkdir -p "./$(LOGDIR)" ; \
 	logfile="./$(LOGDIR)/app.$(TIMESTAMP).log" ; \
 	export FLASK_APP="interpreter/webapp" ; \
-	flask run --port="$(PORT)" --host="$(IP)" 2>&1 > "$${logfile}" & appProcess="$$!" ; \
-	echo ">>> Running app on port $(PORT), process ID $${appProcess}, logging to $${logfile}" 
-# ;\
+	echo ">>> Starting app $${FLASK_APP} on port $(PORT), host $(IP), log file: $${logfile}" > "$${logfile}" ; \
+	flask run --port="$(PORT)" --host="$(IP)" 2>&1 >> "$${logfile}" & appProcess="$$!" ; \
+	echo ">>> App pid: $${appProcess}" >> "$${logfile}" ; \
+	echo ">>> Running app on port $(PORT), process ID $${appProcess}, logging to $${logfile}"
+
 # wait $${appProcess}
-
-
-
-
-
