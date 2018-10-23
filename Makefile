@@ -152,14 +152,18 @@ run:
 
 # deploy the app on production server
 PORT:=
+IP:=
 check-port:
+	@[ -z "$(PORT)" ] && echo ">>> No PORT passed, exiting..." && exit 1 || :
+check-ip:
 	@[ -z "$(PORT)" ] && echo ">>> No PORT passed, exiting..." && exit 1 || :
 deploy:
 	@$(MAKE) check-port
+	@$(MAKE) check-ip
 	mkdir -p "./$(LOGDIR)" ; \
 	logfile="./$(LOGDIR)/app.$(TIMESTAMP).log" ; \
 	export FLASK_APP="interpreter/webapp" ; \
-	flask run --port="$(PORT)" 2>&1 > "$${logfile}" & appProcess="$$!" ; \
+	flask run --port="$(PORT)" --host="$(IP)" 2>&1 > "$${logfile}" & appProcess="$$!" ; \
 	echo ">>> Running app on port $(PORT), process ID $${appProcess}, logging to $${logfile}" 
 # ;\
 # wait $${appProcess}
