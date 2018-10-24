@@ -57,10 +57,11 @@ th, td {
       </tr>
       <tr>
           <td>
+            PowerPath/EPIC Entry:<br><br>
             Gene Variant: {{ record.data['Genes'] }} {{ record.data['Coding'] }} {{ record.data['Amino Acid Change'] }}<br>
             Type of Variant: {{ record.data['Type'] }}<br>
             COSMIC/NCBI ID: {{ record.data['COSMIC/NCBI'] }}<br>
-            Variant Allele Frequency: {{ record.data['% Frequency'] }}<br>
+            Variant Allele Frequency: {{ record.af_str }}<br>
             Read Counts: {{ record.data['Read Counts'] }}<br>
             Read Coverage: {{ record.data['Coverage'] }}<br>
           </td>

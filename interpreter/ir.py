@@ -99,7 +99,7 @@ class IRTable(object):
         Todo
         ----
         Update this to parse the header lines into a list of dictionaries, or a single dict
-        Update this to work with ``tempfile.SpooledTemporaryFile`` 
+        Update this to work with ``tempfile.SpooledTemporaryFile``
         """
         header_lines = []
         with open(source) as f:
@@ -148,6 +148,8 @@ class IRRecord(object):
         self.tissueType = tissueType
         self.variant = variant
         self.genes = self.parse_genes(self.data['Genes'])
+        self.afs = self.parse_af(self.data['% Frequency'])
+        self.af_str = ' '.join(self.afs)
 
     def parse_genes(self, text):
         """
@@ -193,6 +195,53 @@ class IRRecord(object):
             gene = text
             genes[gene] = ''
         return(list(genes.keys()))
+
+    def parse_af(self, af_str):
+        """
+        Split the Percent Allele Frequency entry in the table into separate entries and only keep non-zero entries
+
+        Parameters
+        ----------
+        af_str: A character string of allele frequency values from a row in the Ion Reporter .tsv table
+
+        Returns
+        -------
+        list:
+            a list of the non-zero allele frequency values
+
+        Examples:
+        ---------
+        Example usage::
+
+            >>> parse_af(af_str = 'AA=0.00, AG=0.00, CG=11.27, CT=0.00, GG=0.00')
+            ['CG=11.27']
+
+            >>> parse_af(af_str = '9.09')
+            ['9.09']
+
+            >>> import numpy as np
+            >>> parse_af(af_str = np.nan)
+            ['nan']
+
+        """
+        all_values = []
+
+        # data is coming from Pandas df and might have nan's, otherwise will be str
+        if not pd.isnull(af_str):
+            parts = af_str.split(', ')
+            if len(parts) > 1:
+                for part in parts:
+                    values = part.split('=')
+                    allele = values[0]
+                    af = values[1]
+                    non_zero = float(af) != 0.0
+                    if non_zero:
+                        all_values.append(part)
+            else:
+                all_values.append(af_str)
+        else:
+            all_values.append(str(af_str))
+        return(all_values)
 
     def _get_interpretations(self, db):
         """
