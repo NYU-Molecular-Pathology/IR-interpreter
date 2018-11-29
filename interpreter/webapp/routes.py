@@ -4,6 +4,7 @@
 """
 import os
 import sys
+import subprocess
 from flask import render_template, request, flash
 from werkzeug.utils import secure_filename
 from . import app
@@ -14,6 +15,12 @@ from .. import pmkb
 # dirname = os.path.dirname(__file__)
 # UPLOAD_FOLDER = os.path.join(dirname, 'uploads')
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+app_version = None
+try:
+    app_version = subprocess.check_output(['git', 'describe', '--always']).decode('ascii').strip()
+except:
+    pass
 
 ALLOWED_EXTENSIONS = set(['tsv'])
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -35,7 +42,7 @@ tumorTypes = db.get_tumorTypes()
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    return(render_template('index.html', tissueTypes = tissueTypes, tumorTypes = tumorTypes))
+    return(render_template('index.html', tissueTypes = tissueTypes, tumorTypes = tumorTypes, version = app_version))
 
 @app.route('/upload', methods=['POST'])
 def upload():
