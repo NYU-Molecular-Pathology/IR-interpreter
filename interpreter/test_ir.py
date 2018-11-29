@@ -41,16 +41,25 @@ class TestIR(unittest.TestCase):
         self.assertTrue(table_genes == expected_genes, 'Did not return expected genes: {0}, instead got: {1}'.format(expected_genes, table_genes))
 
     def test_parse_af1(self):
-        afs = self.demo_table.records[0].parse_af(af_str = 'AA=0.00, AG=0.00, CG=11.27, CT=0.00, GG=0.00')
+        afs = self.demo_table.records[0].parse_af(af = 'AA=0.00, AG=0.00, CG=11.27, CT=0.00, GG=0.00')
         expected_afs = ['CG=11.27']
         self.assertTrue(afs == expected_afs, 'Did not return expected afs: {0}, instead got: {1}'.format(expected_afs, afs))
 
     def test_parse_af2(self):
-        afs = self.demo_table.records[0].parse_af(af_str = '9.09')
+        afs = self.demo_table.records[0].parse_af(af = '9.09')
         expected_afs = ['9.09']
         self.assertTrue(afs == expected_afs, 'Did not return expected afs: {0}, instead got: {1}'.format(expected_afs, afs))
 
     def test_parse_af3(self):
-        afs = self.demo_table.records[0].parse_af(af_str = np.nan)
+        afs = self.demo_table.records[0].parse_af(af = np.nan)
         expected_afs = ['nan']
+        self.assertTrue(afs == expected_afs, 'Did not return expected afs: {0}, instead got: {1}'.format(expected_afs, afs))
+
+    def test_parse_af4(self):
+        """
+        Make sure string coercion works to parse AF entries that were not read in as strings
+        float input = string output
+        """
+        afs = self.demo_table.records[0].parse_af(af = 38.44)
+        expected_afs = ['38.44']
         self.assertTrue(afs == expected_afs, 'Did not return expected afs: {0}, instead got: {1}'.format(expected_afs, afs))

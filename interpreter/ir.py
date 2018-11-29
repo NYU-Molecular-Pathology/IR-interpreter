@@ -149,7 +149,7 @@ class IRRecord(object):
         self.variant = variant
         self.genes = self.parse_genes(self.data['Genes'])
         self.afs = self.parse_af(self.data['% Frequency'])
-        self.af_str = ' '.join(self.afs)
+        self.af_str = ' '.join([str(x) for x in self.afs])
 
     def parse_genes(self, text):
         """
@@ -196,52 +196,62 @@ class IRRecord(object):
             genes[gene] = ''
         return(list(genes.keys()))
 
-    def parse_af(self, af_str):
+    def parse_af(self, af):
         """
-        Split the Percent Allele Frequency entry in the table into separate entries and only keep non-zero entries
+        Attempts to split the Percent Allele Frequency ('% Frequency') entry in the IR table into separate entries and only keep non-zero entries.
 
         Parameters
         ----------
-        af_str: A character string of allele frequency values from a row in the Ion Reporter .tsv table
+        af: str
+            Allele frequency values from a row in the Ion Reporter .tsv table; coerced to type ``str``
 
         Returns
         -------
         list:
-            a list of the non-zero allele frequency values
+            a list character strings of the non-zero allele frequency values
 
         Examples:
         ---------
         Example usage::
 
-            >>> parse_af(af_str = 'AA=0.00, AG=0.00, CG=11.27, CT=0.00, GG=0.00')
+            >>> parse_af(af = 'AA=0.00, AG=0.00, CG=11.27, CT=0.00, GG=0.00')
             ['CG=11.27']
 
-            >>> parse_af(af_str = '9.09')
+            >>> parse_af(af = '9.09')
             ['9.09']
 
+            >>> parse_af(af = 38.44)
+            ['38.44']
+
             >>> import numpy as np
-            >>> parse_af(af_str = np.nan)
+            >>> parse_af(af = np.nan)
             ['nan']
 
         """
         all_values = []
 
-        # data is coming from Pandas df and might have nan's, otherwise will be str
-        if not pd.isnull(af_str):
-            parts = af_str.split(', ')
+        # check if data is a Pandas nan value
+        if not pd.isnull(af):
+            # coerce to str and attempt to split
+            parts = str(af).split(', ')
+            # if split produced multiple parts, continue parsing
             if len(parts) > 1:
                 for part in parts:
+                    # attempt to split again on '='
                     values = part.split('=')
+                    # separate nucleotide and af
                     allele = values[0]
-                    af = values[1]
-                    non_zero = float(af) != 0.0
+                    af_val = values[1]
+                    # only return the alleles with non-zero af value
+                    non_zero = float(af_val) != 0.0
                     if non_zero:
                         all_values.append(part)
             else:
-                all_values.append(af_str)
+                all_values.append(str(af))
         else:
-            all_values.append(str(af_str))
-        return(all_values)
+            all_values.append(str(af))
+        # make sure everything returned is a str
+        return([str(x) for x in all_values])
 
     def _get_interpretations(self, db):
         """
