@@ -112,6 +112,10 @@ debug:
 # python -c 'import sys; import app; print(sys.modules); p, i = app.PMKB.demo(); t = app.IR.demo(); app.dev.debugger(globals().copy())'
 # python -c 'import sys; import app; print(sys.modules); print(dir(app))'
 
+IRTSV:=
+report:
+	interpreter/report.py "$(IRTSV)" $(REP)
+
 # directory monitor script
 RSYNC_CONFIG:=/ifs/data/molecpathlab/private_data/IR-interpreter-rsync.json
 MONITOR_DIR:=/ifs/data/molecpathlab/production/IonReporter-interpretations
