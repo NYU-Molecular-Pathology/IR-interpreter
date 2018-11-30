@@ -168,7 +168,7 @@ deploy:
 	logfile="./$(LOGDIR)/app.$(TIMESTAMP).log" ; \
 	export FLASK_APP="interpreter/webapp" ; \
 	echo ">>> Starting app $${FLASK_APP} on $(IP):$(PORT), log file: $${logfile}" > "$${logfile}" ; \
-	flask run --port="$(PORT)" --host="$(IP)" 2>&1 >> "$${logfile}" & appProcess="$$!" ; \
+	flask run --port="$(PORT)" --host="$(IP)" >>"$${logfile}" 2>&1 & appProcess="$$!" ; \
 	echo ">>> App pid: $${appProcess}" >> "$${logfile}" ; \
 	echo ">>> Running app on port $(PORT), process ID $${appProcess}, logging to $${logfile}"
 
