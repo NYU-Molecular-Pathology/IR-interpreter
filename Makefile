@@ -164,7 +164,7 @@ check-ip:
 deploy:
 	@$(MAKE) check-port
 	@$(MAKE) check-ip
-	mkdir -p "./$(LOGDIR)" ; \
+	@mkdir -p "./$(LOGDIR)" ; \
 	logfile="./$(LOGDIR)/app.$(TIMESTAMP).log" ; \
 	export FLASK_APP="interpreter/webapp" ; \
 	echo ">>> Starting app $${FLASK_APP} on $(IP):$(PORT), log file: $${logfile}" > "$${logfile}" ; \
