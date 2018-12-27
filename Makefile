@@ -23,10 +23,38 @@ conda:
 	rm -f "$(CONDASH)"
 
 conda-install: conda
-	conda install -y django=2.1.2
+	conda install -y django=2.1.2 pandas=0.23.4 'xlrd>=0.9.0'
 
 # ~~~~~ SETUP DJANGO APP ~~~~~ #
-# setting up & re-setting up the app
-setup:
-	django-admin startproject ir .
-	python manage.py startapp interpreter
+# create the app for development
+# start:
+# 	django-admin startproject webapp .
+# 	python manage.py startapp interpreter
+
+init:
+	python manage.py makemigrations
+	python manage.py migrate
+	# python manage.py migrate lims --database=lims_db # need to do this for each database
+	python manage.py createsuperuser
+
+# # re-initialize just the databases
+reinit:
+	python manage.py makemigrations
+	python manage.py migrate
+# 	python manage.py migrate lims --database=lims_db
+
+# # destroy app database
+nuke:
+	rm -rf interpreter/migrations/__pycache__
+	rm -f interpreter/migrations/0*.py
+	# rm -f lims.sqlite3
+	rm -f db.sqlite3
+
+# import data from PMKB .xlsx into database
+import:
+	python import-pmkb.py
+
+# ~~~~~ RUN ~~~~~ #
+# runs the web server
+runserver:
+	python manage.py runserver
