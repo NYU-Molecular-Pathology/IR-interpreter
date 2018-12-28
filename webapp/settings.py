@@ -14,7 +14,13 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+DB_DIR = os.path.realpath(os.environ.get(
+    'DB_DIR', # try to get dir from environment
+    os.path.join(BASE_DIR, 'db') # fallback to db/ in project dir
+    ))
+DJANGO_DB = os.path.join(DB_DIR, os.environ.get('DJANGO_DB', 'db.sqlite3'))
+INTERPRETER_DB = os.path.join(DB_DIR, os.environ.get('INTERPRETER_DB', 'interpreter.sqlite3'))
+PMKB_DB = os.path.join(DB_DIR, os.environ.get('PMKB_DB', 'pmkb.sqlite3'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -77,10 +83,19 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'NAME': DJANGO_DB, # os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'interpreter_db': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': INTERPRETER_DB,
+    },
+    'pmkb_db': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': PMKB_DB,
+    },
 }
 
+DATABASE_ROUTERS = ['interpreter.routers.Router']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

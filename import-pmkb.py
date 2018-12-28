@@ -110,6 +110,11 @@ def make_entries(df):
 
 
 if __name__ == '__main__':
+    args = sys.argv[1:]
+    import_limit = None
+    if len(args) > 0:
+        import_limit = int(args[0])
+
     pmkb_xlsx = "db/pmkb.xlsx"
     pmkb_df = xlsx2df(pmkb_xlsx)
     print("Read {0} entries from xlsx file".format(len(pmkb_df.index)))
@@ -120,25 +125,29 @@ if __name__ == '__main__':
     num_created_interpretations = 0
     num_created_variants = 0
     for index, row in entries.iterrows():
-        # add the interpretations first
-        interpretaion_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
-            interpretation = row['Interpretation'],
-            citations = row['Citation'],
-            source_row =  row['Source'],
+        # NOTE: limit on number imported for dev; full import takes ~3min
+        if import_limit and num_created_variants >= int(import_limit):
+            break
+        else:
+            # add the interpretations first
+            interpretaion_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
+                interpretation = row['Interpretation'],
+                citations = row['Citation'],
+                source_row =  row['Source'],
+                )
+            if created_interpretation:
+                num_created_interpretations += 1
+            # add the variant in each row
+            instance, created_variant = PMKBVariant.objects.get_or_create(
+                gene = row['Gene'],
+                tumor_type = row['TumorType'],
+                tissue_type = row['TissueType'],
+                variant = row['Variant'],
+                tier = row['Tier'],
+                interpretation = interpretaion_instance,
+                source_row =  row['Source']
             )
-        if created_interpretation:
-            num_created_interpretations += 1
-        # add the variant in each row
-        instance, created_variant = PMKBVariant.objects.get_or_create(
-            gene = row['Gene'],
-            tumor_type = row['TumorType'],
-            tissue_type = row['TissueType'],
-            variant = row['Variant'],
-            tier = row['Tier'],
-            interpretation = interpretaion_instance,
-            source_row =  row['Source']
-        )
-        if created_variant:
-            num_created_variants += 1
+            if created_variant:
+                num_created_variants += 1
     print("Added {0} new interpretations and {1} new variants to the database".format(num_created_interpretations, num_created_variants))
     # my_debugger(locals().copy())

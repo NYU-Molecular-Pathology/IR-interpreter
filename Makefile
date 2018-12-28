@@ -31,30 +31,44 @@ conda-install: conda
 # 	django-admin startproject webapp .
 # 	python manage.py startapp interpreter
 
+# initialize app databases for the first time
 init:
 	python manage.py makemigrations
 	python manage.py migrate
-	# python manage.py migrate lims --database=lims_db # need to do this for each database
+	python manage.py migrate interpreter --database=interpreter_db
+	python manage.py migrate interpreter --database=pmkb_db
 	python manage.py createsuperuser
-
-# # re-initialize just the databases
-reinit:
-	python manage.py makemigrations
-	python manage.py migrate
-# 	python manage.py migrate lims --database=lims_db
-
-# # destroy app database
-nuke:
-	rm -rf interpreter/migrations/__pycache__
-	rm -f interpreter/migrations/0*.py
-	# rm -f lims.sqlite3
-	rm -f db.sqlite3
 
 # import data from PMKB .xlsx into database
 import:
-	python import-pmkb.py
+	python import-pmkb.py 75
 
 # ~~~~~ RUN ~~~~~ #
+export DB_DIR:=db
+export DJANGO_DB:=db.sqlite3
+export PMKB_DB:=pmkb.sqlite3
+export INTERPRETER_DB:=interpreter.sqlite3
+
 # runs the web server
 runserver:
 	python manage.py runserver
+
+# ~~~~~ RESET ~~~~~ #
+# re-initialize just the databases
+reinit: nuke
+	python manage.py makemigrations
+	python manage.py migrate
+	python manage.py migrate interpreter --database=interpreter_db
+	python manage.py migrate interpreter --database=pmkb_db
+
+# destroy app database
+nuke:
+	@echo ">>> Removing database items:"; \
+	rm -rfv interpreter/migrations/__pycache__ && \
+	rm -fv interpreter/migrations/0*.py && \
+	rm -fv "$$(python -c 'import os; print(os.path.join("$(DB_DIR)", "$(INTERPRETER_DB)"))')" && \
+	rm -fv "$$(python -c 'import os; print(os.path.join("$(DB_DIR)", "$(PMKB_DB)"))')"
+
+# delete the main Django database as well..
+nuke-all: nuke
+	rm -fv "$$(python -c 'import os; print(os.path.join("$(DB_DIR)", "$(DJANGO_DB)"))')"
