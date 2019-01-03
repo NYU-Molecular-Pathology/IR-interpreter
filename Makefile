@@ -66,6 +66,14 @@ test:
 	print(x.records[0].af_str) ; \
 	'
 
+test-report:
+	interpreter/report.py "example-data/SeraSeq.tsv"
+	python -c 'import interpreter.report as report; \
+	report_html = report.make_report_html(input = "example-data/SeraSeq.tsv") ; \
+	print(report_html) \
+	'
+
+
 # ~~~~~ RESET ~~~~~ #
 # re-initialize just the databases
 reinit: nuke
