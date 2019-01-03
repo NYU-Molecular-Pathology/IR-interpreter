@@ -53,6 +53,19 @@ export INTERPRETER_DB:=interpreter.sqlite3
 runserver:
 	python manage.py runserver
 
+# start interactive shell
+shell:
+	python manage.py shell
+
+test:
+	python -c 'from interpreter.ir import IRTable ; \
+	x = IRTable("example-data/SeraSeq.tsv") ; \
+	print(x.records[0]) ; \
+	print(x.records[0].genes) ; \
+	print(x.records[0].afs) ; \
+	print(x.records[0].af_str) ; \
+	'
+
 # ~~~~~ RESET ~~~~~ #
 # re-initialize just the databases
 reinit: nuke
