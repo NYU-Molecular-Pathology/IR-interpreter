@@ -20,6 +20,7 @@ class IRTable(object):
     def __init__(self, source):
         self.source = source
         self.table = self.load_table(source = self.source)
+        # TODO: fix header load method, need to do a seek(0) or something to read file again from start to allow load from memory
         # self.header = self.load_header(source = self.source)
         self.records = self.get_records(data = self.table)
 
