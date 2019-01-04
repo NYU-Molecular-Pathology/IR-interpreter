@@ -94,6 +94,9 @@ class IRRecord(object):
         self.genes = self.parse_genes(self.data['Genes'])
         self.afs = self.parse_af(self.data['% Frequency'])
         self.af_str = ' '.join([str(x) for x in self.afs])
+        # initialize empty dict to hold interpretations later
+        # add named interpretations sets; {'pmkb': [ interpretation1, interpretation2, ... ]}
+        self.interpretations = {}
 
     def parse_genes(self, text):
         """

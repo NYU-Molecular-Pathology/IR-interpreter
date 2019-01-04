@@ -13,6 +13,8 @@ class PMKBVariant(models.Model):
     source_row = models.IntegerField() # original row in .xlsx file
     imported = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return('[{0}] {1}...'.format(self.gene, self.variant[:15]))
 
 class PMKBInterpretation(models.Model):
     """

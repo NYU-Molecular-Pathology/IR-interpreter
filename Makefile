@@ -41,7 +41,7 @@ init:
 
 # import data from PMKB .xlsx into database
 import:
-	python import-pmkb.py 75
+	python import-pmkb.py 500
 
 # ~~~~~ RUN ~~~~~ #
 export DB_DIR:=db
@@ -73,6 +73,9 @@ test-report:
 	print(report_html) \
 	'
 
+test-interpret:
+	python -c 'import interpreter.interpret'
+	interpreter/interpret.py "example-data/SeraSeq.tsv"
 
 # ~~~~~ RESET ~~~~~ #
 # re-initialize just the databases

@@ -24,7 +24,10 @@ def make_report_html(input, template = 'report.html'):
     report_html = report_template.render({'IRtable': table})
     return(report_html)
 
-if __name__ == '__main__':
+def demo():
     ir_tsv = sys.argv[1] # "example-data/SeraSeq.tsv"
     report_html = make_report_html(input = ir_tsv)
     print(report_html)
+
+if __name__ == '__main__':
+    demo()
