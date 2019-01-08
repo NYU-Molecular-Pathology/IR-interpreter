@@ -23,6 +23,8 @@ def make_report_html(input, template = 'report.html'):
     report_template = get_template(template)
     table = IRTable(input)
     table = interpret.interpret_pmkb(ir_table = table)
+    # print(table.records[3].interpretations['pmkb'][0]['variants'][0].gene)
+    # print(type(table.records[3].interpretations['pmkb'][0]['variants'][0].gene))
     report_html = report_template.render({'IRtable': table})
     return(report_html)
 

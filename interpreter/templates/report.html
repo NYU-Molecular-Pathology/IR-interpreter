@@ -1,4 +1,6 @@
 {% load get %}
+{% load getallattr %}
+{% load unique %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,6 +70,41 @@ th, td {
             </td>
         </tr>
       </table>
+
+      <table style="width:100%;", class="pmkbtable">
+        <tr>
+          <th>PMKB Interpretation</th>
+          <th>Gene</th>
+          <th>TumorType</th>
+          <th>TissueType</th>
+          <th>Variant</th>
+          <th>Tier</th>
+          <th>Citation</th>
+          <th>Source Row</th>
+        </tr>
+        {% if 'pmkb' in record.interpretations %}
+        {% for interpretation in record.interpretations.pmkb  %}
+        <tr>
+            <td>{{ interpretation.interpretation.interpretation }}</td>
+            <td>{{ interpretation.variants|getallattr:'gene'|unique|join:", " }}<br></td>
+            <td>{{ interpretation.variants|getallattr:'tumor_type'|unique|join:", " }}<br></td>
+            <td>{{ interpretation.variants|getallattr:'tissue_type'|unique|join:", " }}<br></td>
+            <td>{{ interpretation.variants|getallattr:'variant'|unique|join:", " }}<br></td>
+            <td>{{ interpretation.variants|getallattr:'tier'|unique|join:", " }}<br></td>
+            <td>{{ interpretation.interpretation.citations }}<br></td>
+            <td>{{ interpretation.variants|getallattr:'source_row'|unique|join:", " }}<br></td>
+
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td>Error: PMKB interpretations not found for this record</td>
+        </tr>
+        {% endif %}
+
+
+      </table>
+
       <br>
       {% endfor %}
     </div>
