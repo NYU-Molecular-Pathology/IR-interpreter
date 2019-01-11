@@ -8,5 +8,6 @@ app_name = 'interpreter'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('demo', views.demo, name='demo'),
     # path('samplesheet/upload', views.samplesheet_upload, name='samplesheet_upload')
 ]
