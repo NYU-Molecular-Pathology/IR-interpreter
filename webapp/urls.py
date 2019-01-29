@@ -18,5 +18,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('interpreter/', include('interpreter.urls')),
+    # path('interpreter/', include('interpreter.urls')),
+    path('', include('interpreter.urls')), # make interpreter the home page
 ]
