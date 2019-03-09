@@ -31,7 +31,9 @@ def upload(request):
         if tumor_type == 'None':
             tumor_type = None
         try:
-            report = make_report_html(input = request.FILES['irtable'])
+            report = make_report_html(input = request.FILES['irtable'],
+                tissue_type = tissue_type,
+                tumor_type = tumor_type)
             return HttpResponse(report)
         except:
             return HttpResponse('Error: File could not be parsed')

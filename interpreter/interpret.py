@@ -53,9 +53,11 @@ def interpret_pmkb(ir_table, **params):
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)
     variant = params.pop('variant', None)
-
     for record in ir_table.records:
-        pmkb_results = query_pmkb(genes = record.genes, params = {'tissue_type': tissue_type, 'tumor_type': tumor_type})
+        pmkb_results = query_pmkb(genes = record.genes,
+            tissue_type = tissue_type,
+            tumor_type = tumor_type,
+            variant = variant)
         record.interpretations['pmkb'] = pmkb_results
     return(ir_table)
 

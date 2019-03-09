@@ -17,12 +17,16 @@ from interpreter.ir import IRTable, IRRecord
 import interpreter.interpret as interpret
 sys.path.pop(0)
 
-def make_report_html(input, template = 'report.html'):
+def make_report_html(input, template = 'report.html', **params):
     """
     """
+    tissue_type = params.pop('tissue_type', None)
+    tumor_type = params.pop('tumor_type', None)
     report_template = get_template(template)
     table = IRTable(input)
-    table = interpret.interpret_pmkb(ir_table = table)
+    table = interpret.interpret_pmkb(ir_table = table,
+        tissue_type = tissue_type,
+        tumor_type = tumor_type)
     # print(table.records[3].interpretations['pmkb'][0]['variants'][0].gene)
     # print(type(table.records[3].interpretations['pmkb'][0]['variants'][0].gene))
     report_html = report_template.render({'IRtable': table})
