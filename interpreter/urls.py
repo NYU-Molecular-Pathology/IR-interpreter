@@ -1,7 +1,7 @@
 from . import views
 
-app_name = 'lims'
+app_name = 'interpreter'
 
 urlpatterns = [
-    path('', views.HomeView.as_view(), name='index')
+    path('', views.index, name='index')
 ]

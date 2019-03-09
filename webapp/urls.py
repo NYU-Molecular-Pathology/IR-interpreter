@@ -19,5 +19,6 @@ from interpreter import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.HomeView.as_view(), name='index')
+    path('', views.index, name='index'),
+    path('upload/', views.upload, name='upload')
 ]
