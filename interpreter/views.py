@@ -6,8 +6,8 @@ from .report import make_report_html
 import subprocess
 
 # get all the available tumor and tissue types to populate the uploads form
-all_tumor_types = PMKBVariant.objects.values_list('tumor_type', flat=True).distinct()
-all_tissue_types = PMKBVariant.objects.values_list('tissue_type', flat=True).distinct()
+all_tumor_types = sorted(PMKBVariant.objects.values_list('tumor_type', flat=True).distinct())
+all_tissue_types = sorted(PMKBVariant.objects.values_list('tissue_type', flat=True).distinct())
 
 # try to get the app version from the git repo
 version = None
