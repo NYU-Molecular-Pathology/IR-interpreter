@@ -15,6 +15,7 @@ try:
 except:
     pass
 
+MAX_UPLOAD_SIZE = 2 * 1024 * 1024 # 2MB
 
 def index(request):
     """
@@ -27,18 +28,24 @@ def index(request):
 def upload(request):
     """
     Responds to a POST request from an uploaded Ion Reporter .tsv file
-
-    TODO:
-    - configure allowed file types
-    - configure file upload size limit
     """
     if request.method == 'POST' and 'irtable' in request.FILES:
+        # check for a tumor or tissue type passed
         tissue_type = request.POST.get('tissue_type', None)
         if tissue_type == 'None':
             tissue_type = None
         tumor_type = request.POST.get('tumor_type', None)
         if tumor_type == 'None':
             tumor_type = None
+
+        # check for file too large
+        if request.FILES['irtable'].size > MAX_UPLOAD_SIZE:
+            return HttpResponse('Error: File is too large, size limit is: {0}MB'.format(MAX_UPLOAD_SIZE / (1024 * 1024)) )
+        # check file type
+        if not str(request.FILES['irtable']).endswith('.tsv'):
+            return HttpResponse('Error: Invalid file type, filename must end with ".tsv"')
+
+        # try to generate the HTML report
         try:
             report = make_report_html(input = request.FILES['irtable'],
                 tissue_type = tissue_type,
@@ -47,4 +54,4 @@ def upload(request):
         except:
             return HttpResponse('Error: File could not be parsed')
     else:
-        return HttpResponse('Invalid file selected')
+        return HttpResponse('Error: Invalid file selected')
