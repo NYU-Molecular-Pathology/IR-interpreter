@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic.base import TemplateView
 from .models import PMKBVariant
 from .report import make_report_html
 import subprocess
@@ -18,11 +17,21 @@ except:
 
 
 def index(request):
+    """
+    Returns the home page index
+    """
     template = "interpreter/index.html"
     context = {'version': version, 'tumor_types': all_tumor_types, 'tissue_types': all_tissue_types}
     return render(request, template, context)
 
 def upload(request):
+    """
+    Responds to a POST request from an uploaded Ion Reporter .tsv file
+
+    TODO:
+    - configure allowed file types
+    - configure file upload size limit
+    """
     if request.method == 'POST' and 'irtable' in request.FILES:
         tissue_type = request.POST.get('tissue_type', None)
         if tissue_type == 'None':

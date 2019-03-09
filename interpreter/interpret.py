@@ -18,10 +18,30 @@ from interpreter.ir import IRTable
 sys.path.pop(0)
 
 def query_variant(model, **params):
+    """
+    NOTE: what is this for? I do not remember
+    Perhaps some future method of potentially querying a variant directly
+    Consider deleting this
+    """
     variants = model.objects.filter(**params)
     return(variants)
 
 def query_pmkb(genes, **params):
+    """
+    Get PMKB interpretations for a list of genes.
+
+    Parameters
+    ----------
+    genes: list
+        a list of gene identifiers
+    **params: str
+        an optional set of string keyword arguments to filter PMKB results by, for the following keys: 'tissue_type', 'tumor_type', 'variant'
+
+    Returns
+    -------
+    list
+        a list of dict's containing the interpretations for all variants matching the given genes, filtering by other criteria passed in `**params`
+    """
     # parse the parameters passed
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)
@@ -49,6 +69,19 @@ def query_pmkb(genes, **params):
     return(results)
 
 def interpret_pmkb(ir_table, **params):
+    """
+    Adds PMKB interpretations to an Ion Reporter table
+
+    Parameters
+    ----------
+    ir_table: IRTable
+        an `IRTable` object created from a valid Ion Reporter export .tsv file
+
+    Returns
+    -------
+    IRTable
+        the original `ir_table` object is returned, with interpretations added for each record in the table.
+    """
     # parse the parameters passed
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)

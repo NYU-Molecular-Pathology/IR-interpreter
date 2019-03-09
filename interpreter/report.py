@@ -19,6 +19,21 @@ sys.path.pop(0)
 
 def make_report_html(input, template = 'report.html', **params):
     """
+    Generates an HTML report based on a supplied Ion Reporter .tsv file
+
+    Parameters
+    ----------
+    input: str
+        the path to an Ion Reporter .tsv file, or a file-like object that can be read
+    template: str
+        path to HTML template to use for reporting
+    **params: str
+        an optional set of string keyword arguments to filter interpretation query results by, for the following keys: 'tissue_type', 'tumor_type'
+
+    Returns
+    -------
+    str
+        the formatted HTML string output is returned
     """
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)
