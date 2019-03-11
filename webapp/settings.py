@@ -25,8 +25,7 @@ PMKB_DB = os.path.join(DB_DIR, os.environ.get('PMKB_DB', 'pmkb.sqlite3'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'c@(^go1#79qpns-=kevxy*v6=206w5df!2ta%+j+#z)j-j%8f$'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

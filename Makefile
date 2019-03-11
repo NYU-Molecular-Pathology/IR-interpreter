@@ -30,9 +30,15 @@ conda-install: conda
 # start:
 # 	django-admin startproject webapp .
 # 	python manage.py startapp interpreter
+export SECRET_KEY_FILE:=$(HOME)/.ir-interpreter.txt
+export SECRET_KEY="$(shell head -1 "$(SECRET_KEY_FILE)")"
+
+$(SECRET_KEY_FILE):
+	python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())' > "$(SECRET_KEY_FILE)"
+secret-key: $(SECRET_KEY_FILE)
 
 # initialize app databases for the first time
-init:
+init: secret-key
 	python manage.py makemigrations
 	python manage.py migrate
 	python manage.py migrate interpreter --database=interpreter_db
@@ -57,18 +63,9 @@ runserver:
 shell:
 	python manage.py shell
 
-# requires full PMKB database import to work...
+# run the app's test suite; requires full PMKB database import to work
 test:
 	python manage.py test
-
-test1:
-	python -c 'from interpreter.ir import IRTable ; \
-	x = IRTable("example-data/SeraSeq.tsv") ; \
-	print(x.records[0]) ; \
-	print(x.records[0].genes) ; \
-	print(x.records[0].afs) ; \
-	print(x.records[0].af_str) ; \
-	'
 
 test-report:
 	interpreter/report.py "example-data/SeraSeq.tsv" > report.html
