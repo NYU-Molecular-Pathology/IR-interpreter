@@ -57,6 +57,7 @@ runserver:
 shell:
 	python manage.py shell
 
+# requires full PMKB database import to work...
 test:
 	python manage.py test
 
