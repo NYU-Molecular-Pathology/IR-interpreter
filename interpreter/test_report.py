@@ -13,3 +13,7 @@ class TestIR(TestCase):
 
     def test_report_html_creation(self):
         self.assertTrue(len(self.html) > 0)
+    def test_report_content_start(self):
+        self.assertTrue(self.html.strip().startswith('<!DOCTYPE html>'))
+    def test_report_content_end(self):
+        self.assertTrue(self.html.strip().endswith('</html>'))
