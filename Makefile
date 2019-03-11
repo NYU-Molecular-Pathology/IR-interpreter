@@ -41,7 +41,7 @@ init:
 
 # import data from PMKB .xlsx into database
 import:
-	python import-pmkb.py 500
+	python interpreter/importer.py
 
 # ~~~~~ RUN ~~~~~ #
 export DB_DIR:=db
