@@ -1,6 +1,6 @@
 import os
 from django.test import TestCase
-from .models import PMKBVariant
+from .models import PMKBVariant, PMKBInterpretation
 from .ir import IRTable
 
 # https://docs.djangoproject.com/en/2.1/topics/testing/overview/
@@ -9,9 +9,28 @@ from .ir import IRTable
 fixtures_dir = os.path.join(os.path.dirname(__file__), "fixtures")
 IR_tsv = os.path.join(fixtures_dir, "SeraSeq.tsv")
 
-# print(PMKBVariant.objects.all().count())
+# accesses the production database
+# print(PMKBVariant.objects.all().count()) # 22834
 
 class InterpreterTestCase(TestCase):
     def setUp(self):
-        self.fixtures_dir = fixtures_dir
-        self.IR_tsv = IR_tsv
+        # make demo fake db entries
+        self.interpretation_instance = PMKBInterpretation.objects.create(
+            interpretation = "Foo",
+            citations = "Bar",
+            source_row =  5
+            )
+        self.variant_instance = PMKBVariant.objects.get_or_create(
+            gene = 'NRAS',
+            tumor_type = 'Acute Myeloid Leukemia',
+            tissue_type = 'Blood',
+            variant = '',
+            tier = 1,
+            interpretation = self.interpretation_instance,
+            source_row =  5
+        )
+
+    def test_pmkb_db(self):
+        # check that there is only 1 entry in the test db now
+        self.assertTrue(PMKBVariant.objects.all().count() == 1)
+        self.assertTrue(PMKBInterpretation.objects.all().count() == 1)
