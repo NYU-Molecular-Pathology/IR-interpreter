@@ -4,10 +4,6 @@ from .models import PMKBVariant
 from .report import make_report_html
 import subprocess
 
-# get all the available tumor and tissue types to populate the uploads form
-all_tumor_types = sorted(PMKBVariant.objects.values_list('tumor_type', flat=True).distinct())
-all_tissue_types = sorted(PMKBVariant.objects.values_list('tissue_type', flat=True).distinct())
-
 # try to get the app version from the git repo
 version = None
 try:
@@ -21,6 +17,9 @@ def index(request):
     """
     Returns the home page index
     """
+    # get all the available tumor and tissue types to populate the uploads form
+    all_tumor_types = sorted(PMKBVariant.objects.values_list('tumor_type', flat=True).distinct())
+    all_tissue_types = sorted(PMKBVariant.objects.values_list('tissue_type', flat=True).distinct())
     template = "interpreter/index.html"
     context = {'version': version, 'tumor_types': all_tumor_types, 'tissue_types': all_tissue_types}
     return render(request, template, context)
