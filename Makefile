@@ -58,6 +58,9 @@ shell:
 	python manage.py shell
 
 test:
+	python manage.py test
+
+test1:
 	python -c 'from interpreter.ir import IRTable ; \
 	x = IRTable("example-data/SeraSeq.tsv") ; \
 	print(x.records[0]) ; \
