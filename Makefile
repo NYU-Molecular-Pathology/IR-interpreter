@@ -71,11 +71,6 @@ test1:
 	'
 
 test-report:
-	interpreter/report.py "example-data/SeraSeq.tsv"
-	python -c 'import interpreter.report as report; \
-	report_html = report.make_report_html(input = "example-data/SeraSeq.tsv") ; \
-	# print(report_html) \
-	'
 	interpreter/report.py "example-data/SeraSeq.tsv" > report.html
 
 test-interpret:
