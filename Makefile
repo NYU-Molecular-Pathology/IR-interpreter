@@ -1,6 +1,20 @@
 SHELL:=/bin/bash
 UNAME:=$(shell uname)
 
+# app locations and configs
+export DB_DIR:=db
+export DJANGO_DB:=db.sqlite3
+export PMKB_DB:=pmkb.sqlite3
+export INTERPRETER_DB:=interpreter.sqlite3
+export SECRET_KEY_FILE:=$(HOME)/.ir-interpreter.txt
+export SECRET_KEY="$(shell head -1 "$(SECRET_KEY_FILE)")"
+TIMESTAMP:="$(shell date '+%Y-%m-%d-%H-%M-%S')"
+DB_BACKUP_DIR:=$(DB_DIR)/backup
+DB_BACKUP_PATH:=$(DB_BACKUP_DIR)/$(TIMESTAMP)
+PMKB_DB_PATH:=$(DB_DIR)/$(PMKB_DB)
+DJANGO_DB_PATH:=$(DB_DIR)/$(DJANGO_DB)
+INTERPRETER_DB_PATH:=$(DB_DIR)/$(INTERPRETER_DB)
+
 # ~~~~~ Setup Conda ~~~~~ #
 PATH:=$(CURDIR)/conda/bin:$(PATH)
 unexport PYTHONPATH
@@ -30,15 +44,18 @@ conda-install: conda
 # start:
 # 	django-admin startproject webapp .
 # 	python manage.py startapp interpreter
-export SECRET_KEY_FILE:=$(HOME)/.ir-interpreter.txt
-export SECRET_KEY="$(shell head -1 "$(SECRET_KEY_FILE)")"
 
+# make  sure db dir exists
+$(DB_DIR):
+	mkdir -p "$(DB_DIR)"
+
+# create secret key file
 $(SECRET_KEY_FILE):
 	python manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())' > "$(SECRET_KEY_FILE)"
 secret-key: $(SECRET_KEY_FILE)
 
 # initialize app databases for the first time
-init: secret-key
+init: secret-key $(DB_DIR)
 	python manage.py makemigrations
 	python manage.py migrate
 	python manage.py migrate interpreter --database=interpreter_db
@@ -49,11 +66,17 @@ init: secret-key
 import:
 	python interpreter/importer.py
 
+DJANGO_DB_BACKUP:=$(DB_BACKUP_PATH)/db.sql.gz
+PMKB_DB_BACKUP:=$(DB_BACKUP_PATH)/pmkb.sql.gz
+INTERPRETER_DB_BACKUP:=$(DB_BACKUP_PATH)/interpreter.sql.gz
+backup:
+	mkdir -p "$(DB_BACKUP_PATH)" && \
+	sqlite3 "$(DJANGO_DB_PATH)" '.dump' | gzip > "$(DJANGO_DB_BACKUP)" && \
+	sqlite3 "$(PMKB_DB_PATH)" '.dump' | gzip > "$(PMKB_DB_BACKUP)" && \
+	sqlite3 "$(INTERPRETER_DB_PATH)" '.dump' | gzip > "$(INTERPRETER_DB_BACKUP)"
+# python manage.py dumpdata interpreter --indent 4 --traceback
+
 # ~~~~~ RUN ~~~~~ #
-export DB_DIR:=db
-export DJANGO_DB:=db.sqlite3
-export PMKB_DB:=pmkb.sqlite3
-export INTERPRETER_DB:=interpreter.sqlite3
 
 # runs the web server
 runserver:
@@ -63,16 +86,23 @@ runserver:
 shell:
 	python manage.py shell
 
-# run the app's test suite; requires full PMKB database import to work
+# run arbitrary user-passed command
+CMD:=
+cmd:
+	$(CMD)
+
+# run the app's test suite
 test:
 	python manage.py test
 
+# test report output
 test-report:
-	interpreter/report.py "example-data/SeraSeq.tsv" > report.html
+	interpreter/report.py "interpreter/fixtures/SeraSeq.tsv" > report.html
 
+# test variant interpretation
 test-interpret:
 	python -c 'import interpreter.interpret'
-	interpreter/interpret.py "example-data/SeraSeq.tsv"
+	interpreter/interpret.py "interpreter/fixtures/SeraSeq.tsv"
 
 # ~~~~~ RESET ~~~~~ #
 # re-initialize just the databases

@@ -40,14 +40,14 @@ class Router(object):
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         """Ensure that the interpreter app's models get created on the right database."""
-
-        if str(model_name).lower().startswith('pmkb'):
-            return db == 'pmkb_db'
-
+        # print("db:{db}, app_label:{app_label}, model_name:{model_name}".format(db=db, app_label=app_label, model_name=model_name))
+        # The interpreter app should be migrated only on the interpreter_db database.
         if app_label == 'interpreter':
-            # The interpreter app should be migrated only on the interpreter_db database.
+            # PMKB entries should be created in the PMKB db
+            if str(model_name).lower().startswith('pmkb'):
+                return db == 'pmkb_db'
             return db == 'interpreter_db'
-        elif db == 'interpreter_db':
+        elif db == 'interpreter_db': # NOTE: what does this do? Does this work??
             # Ensure that all other apps don't get migrated on the interpreter_db database.
             return False
 
