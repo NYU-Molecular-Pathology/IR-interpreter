@@ -7,6 +7,9 @@ import os
 import sys
 import django
 from django.template.loader import get_template
+import logging
+
+logger = logging.getLogger()
 
 # import app from top level directory
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -38,12 +41,15 @@ def make_report_html(input, template = 'report.html', **params):
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)
     report_template = get_template(template)
+    logger.info("generating IRTable from input file")
     table = IRTable(input)
+    logger.info("generating PMKB interpretations")
     table = interpret.interpret_pmkb(ir_table = table,
         tissue_type = tissue_type,
         tumor_type = tumor_type)
     # print(table.records[3].interpretations['pmkb'][0]['variants'][0].gene)
     # print(type(table.records[3].interpretations['pmkb'][0]['variants'][0].gene))
+    logger.info("rendering HTML from IRTable")
     report_html = report_template.render({'IRtable': table})
     return(report_html)
 

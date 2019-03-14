@@ -7,6 +7,9 @@ import os
 import sys
 import django
 from collections import defaultdict
+import logging
+
+logger = logging.getLogger()
 
 # import app from top level directory
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -48,6 +51,7 @@ def query_pmkb(genes, **params):
     variant = params.pop('variant', None)
 
     # build database query
+    logger.info("building database query")
     variant_query = PMKBVariant.objects.filter(gene__in = genes)
     if tissue_type:
         variant_query = variant_query.filter(tissue_type = tissue_type)
@@ -86,6 +90,7 @@ def interpret_pmkb(ir_table, **params):
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)
     variant = params.pop('variant', None)
+    logger.info("querying database for records in the IRTable")
     for record in ir_table.records:
         pmkb_results = query_pmkb(genes = record.genes,
             tissue_type = tissue_type,

@@ -21,7 +21,7 @@ DB_DIR = os.path.realpath(os.environ.get(
 DJANGO_DB = os.path.join(DB_DIR, os.environ.get('DJANGO_DB', 'db.sqlite3'))
 INTERPRETER_DB = os.path.join(DB_DIR, os.environ.get('INTERPRETER_DB', 'interpreter.sqlite3'))
 PMKB_DB = os.path.join(DB_DIR, os.environ.get('PMKB_DB', 'pmkb.sqlite3'))
-
+LOG_DIR = os.path.realpath(os.environ.get('LOG_DIR', 'logs'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -31,6 +31,85 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# also see these:
+# https://docs.djangoproject.com/en/2.1/topics/logging/
+# conda/lib/python3.6/site-packages/django/utils/log.py
+# conda/pkgs/django-2.1.2-py36_1000/lib/python3.6/site-packages/django/conf/global_settings.py
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'datefmt' : '%Y-%m-%d %H:%M:%S',
+            'style': '{',
+        },
+        'custom': {
+            'datefmt' : '%Y-%m-%d %H:%M:%S',
+            'format': '[%(asctime)s] %(levelname)s (%(name)s:%(module)s:%(funcName)s:%(lineno)d) %(message)s'
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'debug.log'),
+            'formatter': 'custom',
+        },
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'console_custom' : {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'custom',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '' : { # catch-all logger
+            'handlers': ['file', 'console_custom'],
+            'level': 'DEBUG',
+            'propagate': True,
+            },
+        'interpreter.views': {
+            'handlers': ['file', 'console_custom'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
 
 
 # Application definition

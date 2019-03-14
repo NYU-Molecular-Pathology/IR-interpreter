@@ -2,6 +2,7 @@ SHELL:=/bin/bash
 UNAME:=$(shell uname)
 
 # app locations and configs
+export LOG_DIR:=logs
 export DB_DIR:=db
 export DJANGO_DB:=db.sqlite3
 export PMKB_DB:=pmkb.sqlite3

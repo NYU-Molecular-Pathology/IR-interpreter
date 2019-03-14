@@ -3,6 +3,10 @@ from django.shortcuts import render
 from .models import PMKBVariant
 from .report import make_report_html
 import subprocess
+import logging
+
+# logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 # try to get the app version from the git repo
 version = None
@@ -17,6 +21,7 @@ def index(request):
     """
     Returns the home page index
     """
+    logger.info("index requested")
     # get all the available tumor and tissue types to populate the uploads form
     all_tumor_types = sorted(PMKBVariant.objects.values_list('tumor_type', flat=True).distinct())
     all_tissue_types = sorted(PMKBVariant.objects.values_list('tissue_type', flat=True).distinct())
@@ -29,6 +34,7 @@ def upload(request):
     Responds to a POST request from an uploaded Ion Reporter .tsv file
     """
     if request.method == 'POST' and 'irtable' in request.FILES:
+        logger.info("POST requested")
         # check for a tumor or tissue type passed
         tissue_type = request.POST.get('tissue_type', None)
         if tissue_type == 'None':
@@ -38,19 +44,23 @@ def upload(request):
             tumor_type = None
 
         # check for file too large
+        logger.info("checking file size")
         if request.FILES['irtable'].size > MAX_UPLOAD_SIZE:
             return HttpResponse('Error: File is too large, size limit is: {0}MB'.format(MAX_UPLOAD_SIZE / (1024 * 1024)) )
         # check file type
+        logger.info("checking file type")
         if not str(request.FILES['irtable']).endswith('.tsv'):
             return HttpResponse('Error: Invalid file type, filename must end with ".tsv"')
 
         # try to generate the HTML report
         try:
+            logger.info("generating report HTML")
             report = make_report_html(input = request.FILES['irtable'],
                 tissue_type = tissue_type,
                 tumor_type = tumor_type)
             return HttpResponse(report)
         except:
+            logger.error("an error occured while generating report HTML")
             return HttpResponse('Error: File could not be parsed')
     else:
         return HttpResponse('Error: Invalid file selected')
