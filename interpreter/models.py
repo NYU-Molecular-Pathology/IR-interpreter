@@ -1,5 +1,25 @@
 from django.db import models
 
+class UserAccessMetric(models.Model):
+    """
+    Details about usage of the app
+    """
+    ip = models.CharField(max_length=100)
+    view = models.CharField(max_length=255)
+    visited = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return(self.ip)
+
+class UserUploadMetric(models.Model):
+    """
+    Details about usage of the app
+    """
+    ip = models.CharField(max_length=100)
+    size = models.IntegerField()
+    visited = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return(self.ip)
+
 class PMKBVariant(models.Model):
     """
     Details about an individual variant registered in the PMKB

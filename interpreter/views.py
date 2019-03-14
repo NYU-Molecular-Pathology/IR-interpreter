@@ -1,9 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import PMKBVariant
+from .models import PMKBVariant, UserAccessMetric, UserUploadMetric
 from .report import make_report_html
 import subprocess
 import logging
+from ipware import get_client_ip
 
 # logger = logging.getLogger(__name__)
 logger = logging.getLogger()
@@ -22,6 +23,9 @@ def index(request):
     Returns the home page index
     """
     logger.info("index requested")
+    ip, is_routable = get_client_ip(request)
+    # save user access logging
+    instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'index')
     # get all the available tumor and tissue types to populate the uploads form
     all_tumor_types = sorted(PMKBVariant.objects.values_list('tumor_type', flat=True).distinct())
     all_tissue_types = sorted(PMKBVariant.objects.values_list('tissue_type', flat=True).distinct())
@@ -35,6 +39,8 @@ def upload(request):
     """
     if request.method == 'POST' and 'irtable' in request.FILES:
         logger.info("POST requested")
+        ip, is_routable = get_client_ip(request)
+        instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'upload')
         # check for a tumor or tissue type passed
         tissue_type = request.POST.get('tissue_type', None)
         if tissue_type == 'None':
@@ -53,6 +59,8 @@ def upload(request):
         if not str(request.FILES['irtable']).endswith('.tsv'):
             logger.error("Invalid file type")
             return HttpResponse('Error: Invalid file type, filename must end with ".tsv"')
+
+        instance, created = UserUploadMetric.objects.get_or_create(ip = ip, size = request.FILES['irtable'].size)
 
         # try to generate the HTML report
         try:
