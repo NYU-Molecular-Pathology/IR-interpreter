@@ -46,10 +46,12 @@ def upload(request):
         # check for file too large
         logger.info("checking file size")
         if request.FILES['irtable'].size > MAX_UPLOAD_SIZE:
+            logger.error("file size too large; {0:.2f}MB".format(request.FILES['irtable'].size / (1024 * 1024)))
             return HttpResponse('Error: File is too large, size limit is: {0}MB'.format(MAX_UPLOAD_SIZE / (1024 * 1024)) )
         # check file type
         logger.info("checking file type")
         if not str(request.FILES['irtable']).endswith('.tsv'):
+            logger.error("Invalid file type")
             return HttpResponse('Error: Invalid file type, filename must end with ".tsv"')
 
         # try to generate the HTML report
