@@ -4,20 +4,17 @@ class Router(object):
     All other models will be routed to the next router in the DATABASE_ROUTERS setting if applicable,
     or otherwise to the default database.
     https://strongarm.io/blog/multiple-databases-in-django/
+    https://docs.djangoproject.com/en/2.1/topics/db/multi-db/#multiple-databases
     """
 
     def db_for_read(self, model, **hints):
         """Send all read operations on interpreter app models to `interpreter_db`."""
-        # if model._meta.model_name.lower().startswith('pmkb'):
-        #     return 'pmkb_db'
         if model._meta.app_label == 'interpreter':
             return 'interpreter_db'
         return None
 
     def db_for_write(self, model, **hints):
         """Send all write operations on interpreter app models to `interpreter_db`."""
-        # if model._meta.model_name.lower().startswith('pmkb'):
-        #     return 'pmkb_db'
         if model._meta.app_label == 'interpreter':
             return 'interpreter_db'
         return None
@@ -43,13 +40,7 @@ class Router(object):
         # print("db:{db}, app_label:{app_label}, model_name:{model_name}".format(db=db, app_label=app_label, model_name=model_name))
         # The interpreter app should be migrated only on the interpreter_db database.
         if app_label == 'interpreter':
-            # # PMKB entries should be created in the PMKB db
-            # if str(model_name).lower().startswith('pmkb'):
-            #     return db == 'pmkb_db'
             return db == 'interpreter_db'
-        elif db == 'interpreter_db': # NOTE: what does this do? Does this work??
-            # Ensure that all other apps don't get migrated on the interpreter_db database.
-            return False
 
         # No opinion for all other scenarios
         return None

@@ -20,7 +20,6 @@ DB_DIR = os.path.realpath(os.environ.get(
     ))
 DJANGO_DB = os.path.join(DB_DIR, os.environ.get('DJANGO_DB', 'db.sqlite3'))
 INTERPRETER_DB = os.path.join(DB_DIR, os.environ.get('INTERPRETER_DB', 'interpreter.sqlite3'))
-# PMKB_DB = os.path.join(DB_DIR, os.environ.get('PMKB_DB', 'pmkb.sqlite3'))
 LOG_DIR = os.path.realpath(os.environ.get('LOG_DIR', 'logs'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -167,10 +166,6 @@ DATABASES = {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': INTERPRETER_DB,
     },
-    # 'pmkb_db': {
-    # 'ENGINE': 'django.db.backends.sqlite3',
-    # 'NAME': PMKB_DB,
-    # },
 }
 
 DATABASE_ROUTERS = ['interpreter.routers.Router']

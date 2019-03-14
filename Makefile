@@ -5,14 +5,12 @@ UNAME:=$(shell uname)
 export LOG_DIR:=logs
 export DB_DIR:=db
 export DJANGO_DB:=db.sqlite3
-# export PMKB_DB:=pmkb.sqlite3
 export INTERPRETER_DB:=interpreter.sqlite3
 export SECRET_KEY_FILE:=$(HOME)/.ir-interpreter.txt
 export SECRET_KEY="$(shell head -1 "$(SECRET_KEY_FILE)")"
-TIMESTAMP:="$(shell date '+%Y-%m-%d-%H-%M-%S')"
+TIMESTAMP:=$(shell date '+%Y-%m-%d-%H-%M-%S')
 DB_BACKUP_DIR:=$(DB_DIR)/backup
 DB_BACKUP_PATH:=$(DB_BACKUP_DIR)/$(TIMESTAMP)
-# PMKB_DB_PATH:=$(DB_DIR)/$(PMKB_DB)
 DJANGO_DB_PATH:=$(DB_DIR)/$(DJANGO_DB)
 INTERPRETER_DB_PATH:=$(DB_DIR)/$(INTERPRETER_DB)
 
@@ -64,7 +62,6 @@ init: secret-key $(DB_DIR)
 	python manage.py migrate
 	python manage.py migrate interpreter --database=interpreter_db
 	python manage.py createsuperuser
-# python manage.py migrate interpreter --database=pmkb_db
 
 # import data from PMKB .xlsx into database
 import:
@@ -72,18 +69,18 @@ import:
 	python interpreter/importer.py --type tissue_type
 	python interpreter/importer.py
 
-DJANGO_DB_BACKUP:=$(DB_BACKUP_PATH)/db.sql.gz
-# PMKB_DB_BACKUP:=$(DB_BACKUP_PATH)/pmkb.sql.gz
-INTERPRETER_DB_BACKUP:=$(DB_BACKUP_PATH)/interpreter.sql.gz
+DJANGO_DB_BACKUP_SQL:=$(DB_BACKUP_PATH)/db.sql.gz
+DJANGO_DB_BACKUP_JSON:=$(DB_BACKUP_PATH)/db.json.gz
+INTERPRETER_DB_BACKUP_SQL:=$(DB_BACKUP_PATH)/interpreter.sql.gz
+INTERPRETER_DB_BACKUP_JSON:=$(DB_BACKUP_PATH)/interpreter.json.gz
 backup:
 	mkdir -p "$(DB_BACKUP_PATH)" && \
-	sqlite3 "$(DJANGO_DB_PATH)" '.dump' | gzip > "$(DJANGO_DB_BACKUP)" && \
-	sqlite3 "$(INTERPRETER_DB_PATH)" '.dump' | gzip > "$(INTERPRETER_DB_BACKUP)"
-# sqlite3 "$(PMKB_DB_PATH)" '.dump' | gzip > "$(PMKB_DB_BACKUP)" && \
-# python manage.py dumpdata interpreter --indent 4 --traceback
+	sqlite3 "$(DJANGO_DB_PATH)" '.dump' | gzip > "$(DJANGO_DB_BACKUP_SQL)" && \
+	sqlite3 "$(INTERPRETER_DB_PATH)" '.dump' | gzip > "$(INTERPRETER_DB_BACKUP_SQL)" && \
+	python manage.py dumpdata --indent 4 --traceback | gzip > "$(DJANGO_DB_BACKUP_JSON)" && \
+	python manage.py dumpdata --database=interpreter_db interpreter --indent 4 --traceback | gzip > "$(INTERPRETER_DB_BACKUP_JSON)"
 
 # ~~~~~ RUN ~~~~~ #
-
 # runs the web server
 runserver:
 	python manage.py runserver
@@ -120,7 +117,6 @@ reinit: nuke
 	python manage.py makemigrations
 	python manage.py migrate
 	python manage.py migrate interpreter --database=interpreter_db
-# python manage.py migrate interpreter --database=pmkb_db
 
 # destroy app database
 nuke:
@@ -128,7 +124,6 @@ nuke:
 	rm -rfv interpreter/migrations/__pycache__ && \
 	rm -fv interpreter/migrations/0*.py && \
 	rm -fv "$$(python -c 'import os; print(os.path.join("$(DB_DIR)", "$(INTERPRETER_DB)"))')"
-# rm -fv "$$(python -c 'import os; print(os.path.join("$(DB_DIR)", "$(PMKB_DB)"))')"
 
 # delete the main Django database as well..
 nuke-all: nuke
