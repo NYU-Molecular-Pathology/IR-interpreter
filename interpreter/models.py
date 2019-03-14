@@ -47,3 +47,39 @@ class PMKBInterpretation(models.Model):
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
         return('[{0}] {1}...'.format(self.id, self.interpretation[:15]))
+
+class NYUInterpretation(models.Model):
+    """
+    Custom NYU interpretation
+    """
+    tumor_type = models.CharField(blank=False, max_length=255)
+    tissue_type = models.CharField(blank=False, max_length=255)
+    variant = models.CharField(blank=False, max_length=255)
+    variant_type = models.CharField(blank=False, max_length=255)
+    interpretation = models.TextField(blank=True)
+    citations = models.TextField(blank=True)
+    imported = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+class NYUInterpretationGene(models.Model):
+    """
+    A gene entry associated with an NYUInterpretation; there may be multiple genes per NYUInterpretation
+    """
+    interpretation = models.ForeignKey('NYUInterpretation', blank=True, null=True, on_delete = models.SET_NULL)
+    gene = models.CharField(blank=False, max_length=255)
+    imported = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+class NYUTier(models.Model):
+    """
+    NYU custom tiers for specific variants
+    """
+    variant_type = models.CharField(blank=False, max_length=255)
+    tumor_type = models.CharField(blank=False, max_length=255)
+    tissue_type = models.CharField(blank=False, max_length=255)
+    coding = models.CharField(blank=False, max_length=255)
+    protein = models.CharField(blank=False, max_length=255)
+    tier = models.IntegerField()
+    interpretation = models.TextField(blank=True)
+    imported = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
