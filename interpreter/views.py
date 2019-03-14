@@ -29,6 +29,11 @@ def index(request):
     # get all the available tumor and tissue types to populate the uploads form
     all_tumor_types = sorted(PMKBVariant.objects.values_list('tumor_type', flat=True).distinct())
     all_tissue_types = sorted(PMKBVariant.objects.values_list('tissue_type', flat=True).distinct())
+    import json
+    with open("tumor_types.json", "w") as f:
+        json.dump(all_tumor_types, f, indent = 4)
+    with open("tissue_types.json", "w") as f:
+        json.dump(all_tissue_types, f, indent = 4)
     template = "interpreter/index.html"
     context = {'version': version, 'tumor_types': all_tumor_types, 'tissue_types': all_tissue_types}
     return render(request, template, context)

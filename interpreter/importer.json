@@ -1,0 +1,8 @@
+{
+    "fixtures_dir": "fixtures",
+    "tumor_types_json": "tumor_types.json",
+    "tissue_types_json": "tissue_types.json",
+    "pmkb_xlsx": "pmkb.xlsx",
+    "nyu_interpretations_tsv": "nyu.interpretations.tsv",
+    "nyu_tiers_csv": "nyu.tiers.csv"
+}

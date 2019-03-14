@@ -12,19 +12,30 @@ import sys
 import django
 import pandas as pd
 import argparse
+import json
 
 # import django app
-parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, parentdir)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
-django.setup()
-from interpreter.models import PMKBVariant, PMKBInterpretation
-sys.path.pop(0)
+if __name__ == '__main__':
+    parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    sys.path.insert(0, parentdir)
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
+    django.setup()
+    from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType
+    sys.path.pop(0)
+
+# load relative paths from JSON file
+config_json = os.path.join(os.path.realpath(os.path.dirname(__file__)), "importer.json")
+with open(config_json) as f:
+    config_json_data = json.load(f)
 
 # global default configs for the module
 config = {}
-config['fixtures_dir'] = os.path.join(os.path.realpath(os.path.dirname(__file__)), "fixtures")
-config['pmkb_xlsx'] = os.path.join(config['fixtures_dir'], "pmkb.xlsx")
+config['fixtures_dir'] = os.path.join(os.path.realpath(os.path.dirname(__file__)), config_json_data['fixtures_dir'])
+config['pmkb_xlsx'] = os.path.join(config['fixtures_dir'], config_json_data['pmkb_xlsx'])
+config['tumor_types_json'] = os.path.join(config['fixtures_dir'], config_json_data['tumor_types_json'])
+config['tissue_types_json'] = os.path.join(config['fixtures_dir'], config_json_data['tissue_types_json'])
+config['nyu_interpretations_tsv'] = os.path.join(config['fixtures_dir'], config_json_data['nyu_interpretations_tsv'])
+config['nyu_tiers_csv'] = os.path.join(config['fixtures_dir'], config_json_data['nyu_tiers_csv'])
 config['import_limit'] = -1
 config['import_type'] = "PMKB"
 
@@ -108,7 +119,6 @@ def import_PMKB(**kwargs):
     """
     Imports entries from PMKB .xlsx file into the database
     """
-    fixtures_dir = kwargs.pop('fixtures_dir', config['fixtures_dir'])
     pmkb_xlsx = kwargs.pop('pmkb_xlsx', config['pmkb_xlsx'])
     import_limit = kwargs.pop('import_limit', config['import_limit'])
 
@@ -136,6 +146,10 @@ def import_PMKB(**kwargs):
         if import_limit and num_created_variants >= int(import_limit):
             break
         else:
+            # get the tumor type from the database
+            tumor_type_instance = TumorType.objects.get(type = row['TumorType'])
+            tissue_type_instance = TissueType.objects.get(type = row['TissueType'])
+
             # add the interpretations first
             interpretation_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
                 interpretation = row['Interpretation'],
@@ -146,11 +160,12 @@ def import_PMKB(**kwargs):
                 num_created_interpretations += 1
             else:
                 num_skipped_interpretations += 1
+
             # add the variant in each row
             instance, created_variant = PMKBVariant.objects.get_or_create(
                 gene = row['Gene'],
-                tumor_type = row['TumorType'],
-                tissue_type = row['TissueType'],
+                tumor_type = tumor_type_instance,
+                tissue_type = tissue_type_instance,
                 variant = row['Variant'],
                 tier = row['Tier'],
                 interpretation = interpretation_instance,
@@ -167,21 +182,68 @@ def import_PMKB(**kwargs):
     skip_var = num_skipped_variants
     ))
 
+def import_tumor_types(**kwargs):
+    """
+    Imports tumor types from JSON file to the database
+    """
+    tumor_types_json = kwargs.pop('tumor_types_json', config['tumor_types_json'])
+
+    with open(tumor_types_json) as f:
+        tumor_types = json.load(f)
+
+    num_created = 0
+    num_skipped = 0
+    for tumor_type in tumor_types:
+        instance, created = TumorType.objects.get_or_create(type = tumor_type)
+        if created:
+            num_created += 1
+        else:
+            num_skipped += 1
+    print("Added {new} new tumor types ({skipped} skipped) to the databse".format(
+    new = num_created,
+    skipped = num_skipped
+    ))
+
+def import_tissue_types(**kwargs):
+    """
+    Imports tumor types from JSON file to the database
+    """
+    tissue_types_json = kwargs.pop('tissue_types_json', config['tissue_types_json'])
+
+    with open(tissue_types_json) as f:
+        tissue_types = json.load(f)
+
+    num_created = 0
+    num_skipped = 0
+    for tissue_type in tissue_types:
+        instance, created = TissueType.objects.get_or_create(type = tissue_type)
+        if created:
+            num_created += 1
+        else:
+            num_skipped += 1
+    print("Added {new} new tissue types ({skipped} skipped) to the databse".format(
+    new = num_created,
+    skipped = num_skipped
+    ))
+
 def main(**kwargs):
     """
     Main control function for the module.
     """
-    fixtures_dir = kwargs.pop('fixtures_dir', config['fixtures_dir'])
     pmkb_xlsx = kwargs.pop('pmkb_xlsx', config['pmkb_xlsx'])
+    tumor_types_json = kwargs.pop('tumor_types_json', config['tumor_types_json'])
+    tissue_types_json = kwargs.pop('tissue_types_json', config['tissue_types_json'])
     import_limit = kwargs.pop('import_limit', config['import_limit'])
     import_type = kwargs.pop('import_type', config['import_type'])
 
+    if import_type == "tumor_type":
+        import_tumor_types(tumor_types_json = tumor_types_json)
+
+    if import_type == "tissue_type":
+        import_tissue_types(tissue_types_json = tissue_types_json)
+
     if import_type == "PMKB":
-        import_PMKB(
-            fixtures_dir = fixtures_dir,
-            pmkb_xlsx = pmkb_xlsx,
-            import_limit = import_limit
-            )
+        import_PMKB(pmkb_xlsx = pmkb_xlsx, import_limit = import_limit)
 
 def parse():
     """
@@ -189,8 +251,7 @@ def parse():
     """
     parser = argparse.ArgumentParser(description='Import data from files into the app database')
     parser.add_argument("--fixtures-dir", default = config['fixtures_dir'], dest = 'fixtures_dir', help="Parent directory to search for static files")
-    parser.add_argument("--pmkb-xlsx", default = config['pmkb_xlsx'], dest = 'pmkb_xlsx', help="Path to PMKB .xlsx file to import from")
-    parser.add_argument("--import-limit", default = config['import_limit'], dest = 'import_limit', help="Number of entries to import into database. Value of -1 means no limit")
+    parser.add_argument("--import-limit", default = config['import_limit'], dest = 'import_limit', help="Number of entries to import into database from PMKB. Value of -1 means no limit")
     parser.add_argument("--type", default = config['import_type'], dest = 'import_type', help="Type of data to import")
     args = parser.parse_args()
     main(**vars(args))
