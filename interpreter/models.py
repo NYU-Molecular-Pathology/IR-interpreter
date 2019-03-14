@@ -1,4 +1,5 @@
 from django.db import models
+import json
 
 class UserAccessMetric(models.Model):
     """
@@ -52,29 +53,45 @@ class NYUInterpretation(models.Model):
     """
     Custom NYU interpretation
     """
-    tumor_type = models.CharField(blank=False, max_length=255)
-    tissue_type = models.CharField(blank=False, max_length=255)
-    variant = models.CharField(blank=False, max_length=255)
-    variant_type = models.CharField(blank=False, max_length=255)
+    variant = models.CharField(blank=True, max_length=255)
+
+    variant_types = (
+    ('snp', 'snp'),
+    ('fusion', 'fusion')
+    )
+    variant_type = models.CharField(choices=variant_types, max_length=255)
+    # space delimeted list of gene IDs
+    genes = models.CharField(blank=False, max_length=255)
+    # auto-populated JSON list of genes from 'genes'
+    genes_json = models.CharField(blank=True, max_length=255)
+    tumor_type = models.CharField(blank=True, max_length=255)
+    tissue_type = models.CharField(blank=True, max_length=255)
     interpretation = models.TextField(blank=True)
     citations = models.TextField(blank=True)
     imported = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-class NYUInterpretationGene(models.Model):
-    """
-    A gene entry associated with an NYUInterpretation; there may be multiple genes per NYUInterpretation
-    """
-    interpretation = models.ForeignKey('NYUInterpretation', blank=True, null=True, on_delete = models.SET_NULL)
-    gene = models.CharField(blank=False, max_length=255)
-    imported = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    def save(self, *args, **kwargs):
+        """
+        Parse the genes into a list to save as genes_json
+        """
+        gene_list = self.genes.split()
+        self.genes_json = json.dumps(gene_list)
+
+        # call the parent save method
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return('[{0}] {1}...'.format(self.genes, self.interpretation[:15]))
 
 class NYUTier(models.Model):
     """
     NYU custom tiers for specific variants
     """
-    variant_type = models.CharField(blank=False, max_length=255)
+    variant_types = (
+    ('snp', 'snp'),
+    ('fusion', 'fusion')
+    )
+    variant_type = models.CharField(choices=variant_types, blank=False, max_length=255)
     tumor_type = models.CharField(blank=False, max_length=255)
     tissue_type = models.CharField(blank=False, max_length=255)
     coding = models.CharField(blank=False, max_length=255)
