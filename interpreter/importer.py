@@ -13,15 +13,18 @@ import django
 import pandas as pd
 import argparse
 import json
+import csv
+
 
 # import django app
-if __name__ == '__main__':
-    parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    sys.path.insert(0, parentdir)
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
-    django.setup()
-    from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType
-    sys.path.pop(0)
+# if __name__ == '__main__':
+parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, parentdir)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
+django.setup()
+from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType, NYUTier
+from interpreter.util import capitalize, debugger
+sys.path.pop(0)
 
 # load relative paths from JSON file
 config_json = os.path.join(os.path.realpath(os.path.dirname(__file__)), "importer.json")
@@ -143,12 +146,13 @@ def import_PMKB(**kwargs):
     num_skipped_variants = 0
     for index, row in entries.iterrows():
         # NOTE: limit on number imported for dev; full import takes ~3min
+        # TODO: figure out how to speed this up
         if import_limit and num_created_variants >= int(import_limit):
             break
         else:
             # get the tumor type from the database
-            tumor_type_instance = TumorType.objects.get(type = row['TumorType'])
-            tissue_type_instance = TissueType.objects.get(type = row['TissueType'])
+            tumor_type_instance = TumorType.objects.get(type = capitalize(row['TumorType']))
+            tissue_type_instance = TissueType.objects.get(type = capitalize(row['TissueType']))
 
             # add the interpretations first
             interpretation_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
@@ -194,7 +198,7 @@ def import_tumor_types(**kwargs):
     num_created = 0
     num_skipped = 0
     for tumor_type in tumor_types:
-        instance, created = TumorType.objects.get_or_create(type = tumor_type)
+        instance, created = TumorType.objects.get_or_create(type = capitalize(tumor_type))
         if created:
             num_created += 1
         else:
@@ -216,7 +220,7 @@ def import_tissue_types(**kwargs):
     num_created = 0
     num_skipped = 0
     for tissue_type in tissue_types:
-        instance, created = TissueType.objects.get_or_create(type = tissue_type)
+        instance, created = TissueType.objects.get_or_create(type = capitalize(tissue_type))
         if created:
             num_created += 1
         else:
@@ -226,6 +230,38 @@ def import_tissue_types(**kwargs):
     skipped = num_skipped
     ))
 
+def import_nyu_tiers(**kwargs):
+    """
+    Imports values from the NYU tiers list to the database
+    """
+    nyu_tiers_csv = kwargs.pop('nyu_tiers_csv', config['nyu_tiers_csv'])
+    num_created = 0
+    num_skipped = 0
+    with open(nyu_tiers_csv) as f:
+        reader = csv.DictReader(f)
+        # debugger(locals().copy())
+        for row in reader:
+            tumor_type_instance = TumorType.objects.get(type = capitalize(row['tumor_type']).strip())
+            tissue_type_instance = TissueType.objects.get(type = capitalize(row['tissue_type']).strip())
+            instance, created = NYUTier.objects.get_or_create(
+            gene = row['gene'],
+            variant_type = row['type'],
+            tumor_type = tumor_type_instance,
+            tissue_type = tissue_type_instance,
+            coding = row['coding'],
+            protein = row['protein'],
+            tier = int(row['tier']),
+            comment = row['comment']
+            )
+            if created:
+                num_created += 1
+            else:
+                num_skipped += 1
+        print("Added {new} new tissue types ({skipped} skipped) to the databse".format(
+        new = num_created,
+        skipped = num_skipped
+        ))
+
 def main(**kwargs):
     """
     Main control function for the module.
@@ -233,8 +269,10 @@ def main(**kwargs):
     pmkb_xlsx = kwargs.pop('pmkb_xlsx', config['pmkb_xlsx'])
     tumor_types_json = kwargs.pop('tumor_types_json', config['tumor_types_json'])
     tissue_types_json = kwargs.pop('tissue_types_json', config['tissue_types_json'])
+    nyu_tiers_csv = kwargs.pop('nyu_tiers_csv', config['nyu_tiers_csv'])
     import_limit = kwargs.pop('import_limit', config['import_limit'])
     import_type = kwargs.pop('import_type', config['import_type'])
+
 
     if import_type == "tumor_type":
         import_tumor_types(tumor_types_json = tumor_types_json)
@@ -244,6 +282,9 @@ def main(**kwargs):
 
     if import_type == "PMKB":
         import_PMKB(pmkb_xlsx = pmkb_xlsx, import_limit = import_limit)
+
+    if import_type == "nyu_tier":
+        import_nyu_tiers(nyu_tiers_csv = nyu_tiers_csv)
 
 def parse():
     """

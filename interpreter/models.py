@@ -109,12 +109,13 @@ class NYUTier(models.Model):
     """
     NYU custom tiers for specific variants
     """
+    gene = models.CharField(blank=False, max_length=255)
     variant_type = models.CharField(choices = variant_types, blank=False, max_length=255)
     tumor_type = models.ForeignKey(TumorType, on_delete=models.SET_DEFAULT, default = '')
     tissue_type = models.ForeignKey(TissueType, on_delete=models.SET_DEFAULT, default = '')
     coding = models.CharField(blank=False, max_length=255)
     protein = models.CharField(blank=False, max_length=255)
     tier = models.IntegerField()
-    interpretation = models.TextField(blank=True)
+    comment = models.TextField(blank=True)
     imported = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

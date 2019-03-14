@@ -67,7 +67,8 @@ init: secret-key $(DB_DIR)
 import:
 	python interpreter/importer.py --type tumor_type
 	python interpreter/importer.py --type tissue_type
-	python interpreter/importer.py
+	python interpreter/importer.py --type nyu_tier
+	python interpreter/importer.py --type PMKB
 
 DJANGO_DB_BACKUP_SQL:=$(DB_BACKUP_PATH)/db.sql.gz
 DJANGO_DB_BACKUP_JSON:=$(DB_BACKUP_PATH)/db.json.gz

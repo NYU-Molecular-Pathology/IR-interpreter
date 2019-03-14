@@ -16,8 +16,9 @@ parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, parentdir)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
 django.setup()
-from interpreter.models import PMKBVariant, PMKBInterpretation
+from interpreter.models import PMKBVariant, TissueType, TumorType, NYUTier
 from interpreter.ir import IRTable
+from interpreter.util import debugger
 sys.path.pop(0)
 
 def query_variant(model, **params):
@@ -51,16 +52,20 @@ def query_pmkb(genes, **params):
     variant = params.pop('variant', None)
 
     # build database query
-    logger.info("building database query")
+    logger.debug("building database query")
     variant_query = PMKBVariant.objects.filter(gene__in = genes)
     if tissue_type:
-        variant_query = variant_query.filter(tissue_type = tissue_type)
+        logger.debug("adding tissue_type to query")
+        variant_query = variant_query.filter(tissue_type = TissueType.objects.get(type = tissue_type))
     if tumor_type:
-        variant_query = variant_query.filter(tumor_type = tumor_type)
+        logger.debug("adding tumor_type to query")
+        variant_query = variant_query.filter(tumor_type = TumorType.objects.get(type = tumor_type))
     if variant:
+        logger.debug("adding variant to query")
         variant_query = variant_query.filter(variant = variant)
 
     # store interpretations in dict; list of unique variants for each interpretation
+    logger.debug("getting unique interpretations from query")
     interpretations = defaultdict(set)
     for variant_result in variant_query:
         interpretations[variant_result.interpretation].add(variant_result)
@@ -99,13 +104,50 @@ def interpret_pmkb(ir_table, **params):
         record.interpretations['pmkb'] = pmkb_results
     return(ir_table)
 
+def query_nyu_tier(genes, **params):
+    """
+    """
+    tissue_type = params.pop('tissue_type', None)
+    tumor_type = params.pop('tumor_type', None)
+    variant = params.pop('variant', None)
+    debugger(locals().copy())
+    logger.debug("building database query")
+    variant_query = NYUTier.objects.filter(gene__in = genes)
+
+def interpret_nyu_tier(ir_table, **params):
+    """
+    Adds NYU Tier interpretations to an Ion Reporter table
+
+    Parameters
+    ----------
+    ir_table: IRTable
+        an `IRTable` object created from a valid Ion Reporter export .tsv file
+
+    Returns
+    -------
+    IRTable
+        the original `ir_table` object is returned, with interpretations added for each record in the table.
+    """
+    tissue_type = params.pop('tissue_type', None)
+    tumor_type = params.pop('tumor_type', None)
+    variant = params.pop('variant', None)
+    logger.info("querying NYU tier database for records in the IRTable")
+    for record in ir_table.records:
+        pmkb_results = query_nyu_tier(genes = record.genes,
+            tissue_type = tissue_type,
+            tumor_type = tumor_type,
+            variant = variant)
+        record.interpretations['nyu_tier'] = pmkb_results
+    return(ir_table)
+
 def demo():
-    tumor_type = "Skin"
-    tissue_type = "Melanoma"
+    tumor_type = "Melanoma"
+    tissue_type = "Skin" # Adrenal Gland
     params = {'tissue_type': tissue_type, 'tumor_type': tumor_type}
     ir_tsv = sys.argv[1] # "example-data/SeraSeq.tsv"
     ir_table = IRTable(source = ir_tsv)
     ir_table = interpret_pmkb(ir_table = ir_table, **params)
+    interpret_nyu_tier(ir_table = ir_table, **params)
     print(ir_table.records[3].interpretations['pmkb'])
 
 if __name__ == '__main__':
