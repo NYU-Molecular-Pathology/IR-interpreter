@@ -45,6 +45,9 @@ def sanitize_tumor_tissue(label):
     # replace empty string with 'Any'
     if label == '':
         label = "Any"
+    # replace 'All' with 'Any'
+    if label == 'All':
+        label = "Any"
     return(label)
 
 def debugger(vars):
