@@ -30,6 +30,21 @@ th, td {
 
 </head>
 <body>
+    <div>
+        <table>
+            <th>Summary</th>
+            <tr>
+            <td>
+            Tissue Type: {{ tissue_type }}<br>
+            Tumor Type: {{ tumor_type }}<br>
+            IR Entries: {{ num_IR_entries }}<br>
+            PMKB Interpretations: {{ num_PMKB_interpretations }}<br>
+            PMKB Variants: {{ num_PMKB_variants }}<br>
+            Execution time: {{ elapsed }}s<br>
+            </td>
+        </tr>
+        </table>
+    </div>
     <div style="overflow-x:auto;">
       {% for record in IRtable.records %}
 
@@ -56,7 +71,7 @@ th, td {
           <td>{{ record.data|get:'Variant ID' }}</td>
           <td>{{ record.data.TumorType }}</td>
           <td>{{ record.data.TissueType }}</td>
-          <td>{{ record.data.Row }}</td>
+          <td>{{ record.data.Row|add:"1"}}</td>
         </tr>
         <tr>
             <td>

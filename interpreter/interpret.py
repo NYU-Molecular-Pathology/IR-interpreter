@@ -71,6 +71,7 @@ def query_pmkb(genes, **params):
         interpretations[variant_result.interpretation].add(variant_result)
 
     # convert to list of dicts
+    logger.debug("reformatting query results")
     results = []
     for key, value in interpretations.items():
         d = {'interpretation': key, 'variants': list(value)}
@@ -95,13 +96,14 @@ def interpret_pmkb(ir_table, **params):
     tissue_type = params.pop('tissue_type', None)
     tumor_type = params.pop('tumor_type', None)
     variant = params.pop('variant', None)
-    logger.info("querying database for records in the IRTable")
+    logger.debug("querying database for records in the IRTable")
     for record in ir_table.records:
         pmkb_results = query_pmkb(genes = record.genes,
             tissue_type = tissue_type,
             tumor_type = tumor_type,
             variant = variant)
         record.interpretations['pmkb'] = pmkb_results
+    logger.debug("returning database query results")
     return(ir_table)
 
 def query_nyu_tier(genes, **params):

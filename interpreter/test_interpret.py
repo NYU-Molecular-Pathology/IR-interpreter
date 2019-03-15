@@ -3,7 +3,9 @@ from django.test import TestCase
 from .models import PMKBVariant, PMKBInterpretation, TissueType, TumorType
 from .ir import IRTable
 from .interpret import interpret_pmkb
-
+"""
+Tests for the interpret module, to make sure that the correct interpretations are being returned under various conditions
+"""
 fixtures_dir = os.path.join(os.path.dirname(__file__), "fixtures")
 IR_tsv = os.path.join(fixtures_dir, "SeraSeq.tsv")
 NRAS_IDH1_tsv = os.path.join(fixtures_dir, "NRAS_IDH1.tsv")
