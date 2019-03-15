@@ -54,10 +54,10 @@ def query_pmkb(genes, **params):
     # build database query
     logger.debug("building database query")
     variant_query = PMKBVariant.objects.filter(gene__in = genes)
-    if tissue_type:
+    if tissue_type and tissue_type != 'Any':
         logger.debug("adding tissue_type to query")
         variant_query = variant_query.filter(tissue_type = TissueType.objects.get(type = tissue_type))
-    if tumor_type:
+    if tumor_type and tumor_type != 'Any':
         logger.debug("adding tumor_type to query")
         variant_query = variant_query.filter(tumor_type = TumorType.objects.get(type = tumor_type))
     if variant:

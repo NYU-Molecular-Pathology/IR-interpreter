@@ -19,6 +19,19 @@ except:
 
 MAX_UPLOAD_SIZE = 2 * 1024 * 1024 # 2MB
 
+def all_types(type, include_any = True):
+    """
+    Return a list of all types from the database
+    """
+    all_types = []
+    if type == "tumor":
+        all_types = sorted(TumorType.objects.values_list('type', flat = True).distinct())
+    if type == "tissue":
+        all_types = sorted(TissueType.objects.values_list('type', flat=True).distinct())
+    if not include_any:
+        all_types.remove('Any')
+    return(all_types)
+
 def index(request):
     """
     Returns the home page index
@@ -27,10 +40,14 @@ def index(request):
     ip, is_routable = get_client_ip(request)
     # save user access logging
     instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'index')
+
     # get all the available tumor and tissue types to populate the uploads form
     logger.debug("retrieving the available tumor and tissue types")
-    all_tissue_types = sorted(TissueType.objects.values_list('type', flat=True).distinct())
-    all_tumor_types = sorted(TumorType.objects.values_list('type', flat = True).distinct())
+    # 'Any' is hard-coded as first entry in the HTML form
+    all_tissue_types = all_types(type = "tissue", include_any = False)
+    all_tumor_types = all_types(type = "tumor", include_any = False)
+
+    # sanity check for initialized reference databses
     if len(all_tissue_types) < 1:
         logger.warn("all_tissue_types length is less than one; has the database been imported?")
     if len(all_tumor_types) < 1:
@@ -48,13 +65,14 @@ def upload(request):
         ip, is_routable = get_client_ip(request)
         instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'upload')
         # check for a tumor or tissue type passed
-        tissue_type = request.POST.get('tissue_type', None)
-        print(tissue_type)
-        if tissue_type == 'None':
+        # use 'Any' as the default value, pass as None-type to exclude filtering
+        tissue_type = request.POST.get('tissue_type', 'Any')
+        if tissue_type == 'Any':
             tissue_type = None
-        tumor_type = request.POST.get('tumor_type', None)
-        if tumor_type == 'None':
+        tumor_type = request.POST.get('tumor_type', 'Any')
+        if tumor_type == 'Any':
             tumor_type = None
+        logger.debug("tissue_type: {tissue_type}, tumor_type: {tumor_type}".format(tumor_type = tumor_type, tissue_type = tissue_type))
 
         # check for file too large
         logger.debug("checking file size")

@@ -32,7 +32,7 @@ class TissueType(models.Model):
     """
     All the tissue types available for selection
     """
-    type = models.CharField(blank=True, null=True, unique = True, max_length=255)
+    type = models.CharField(blank=False, null=False, unique = True, max_length=255)
     imported = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
@@ -42,7 +42,7 @@ class TumorType(models.Model):
     """
     All the tumor types available for selection
     """
-    type = models.CharField(blank=True, null=True, unique = True, max_length=255)
+    type = models.CharField(blank=False, null=False, unique = True, max_length=255)
     imported = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):

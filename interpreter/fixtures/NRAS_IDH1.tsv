@@ -1,0 +1,18 @@
+##analysisDate=2018-07-31-22-23-45000
+##analyzedBy=User1
+##exportDate=2018-08-21-15-00-11000
+##analysisName=Seraseq-DNA_RNA-07252018_v1_79026a9c-e0ff-4a32-9686-ead82c35f793
+##workflowName=copy of Oncomine Focus w2.1 - DNA and Fusions - Single Sample_8a773813-7561-4f07-8516-660bc895e42e
+##sampleNames=Seraseq-DNA_RNA-07252018_v1:Seraseq-DNA_RNA-07252018_RNA_v1
+##reference=hg19
+##variantGroup=DEFAULT
+##filterChain=Oncomine Variants, 5% CI CNV ploidy >= gain of 2 over normal
+##searchText=
+##chromosome=All
+##totalVariantCount=829
+##filterInCount=35
+##filteredOutCount=794
+##hiddenVariantCount=0
+Locus	Genotype	Ref	Type	No Call Reason	Genes	Location	Length	Oncomine Variant Class	Oncomine Gene Class	Copy Number	CytoBand	Info	Variant ID	Variant Name	% Frequency	Amino Acid Change	Read Counts	Coverage	Allele Ratio	CNV Confidence	Detection	3'/5' Imbalance	COSMIC/NCBI	Read Counts Per Million	Strand	Exon	Transcript	Coding	Variant Effect	PhyloP	SIFT	Grantham	PolyPhen	PFAM	dbSNP	DGV	MAF	EMAF	AMAF	GMAF	UCSC Common SNPs	Gene Ontology	DrugBank	ClinVar	p-value	Phred QUAL Score	Allele Coverage	CNV Precision	Ref+/Ref-/Var+/Var-	Homopolymer Length	Tiles
+chr1:115256529	TG/CG	TG	SNV		NRAS	exonic	1	Hotspot	Gain-of-function			HS	COSM583;COSM584;COSM582;COSM12725;COSM579		AA=0.00, AG=0.00, CG=11.27, CT=0.00, GG=0.00	p.Gln61Arg		1996	TG=0.8873, AA=0.0, AG=0.0, CG=0.1127, CT=0.0, GG=0.0		Present				-	3	NM_002524.4	c.182A>G	missense	2.12,2.62	0	43	0.214	Miro-like protein,Ras family	rs11554290,rs121913254							GTP binding,GTPase activity,Golgi apparatus,Golgi membrane,MAPKKK cascade,Ral guanyl-nucleotide exchange factor activity,Ras protein signal transduction,actin cytoskeleton organization,activation of MAPKK activity,axon guidance,blood coagulation,epidermal growth factor receptor signaling pathway,insulin receptor signaling pathway,leukocyte migration,membrane fraction,nerve growth factor receptor signaling pathway,nucleotide binding,plasma membrane,positive regulation of Rac protein signal transduction,positive regulation of cell proliferation,regulation of long-term neuronal synaptic plasticity,regulation of synaptic transmission, GABAergic,signal transduction,small GTPase mediated signal transduction,striated muscle cell differentiation,visual learning		other,pathogenic	0.00001	519.669	TG=1771, AA=0, AG=0, CG=225, CT=0, GG=0		TG=1000/771, AA=0/0, AG=0/0, CG=137/88, CT=0/0, GG=0/0	2,2,2,2,2
+chr2:209113113	G/A	G	SNV		IDH1	exonic	1	Hotspot	Gain-of-function			HS	COSM28747;COSM28749;COSM28748		A=11.15, C=0.00, T=0.00	p.Arg132Cys		2000	G=0.8885, A=0.1115, C=0.0, T=0.0		Present				-	4	NM_005896.3	c.394C>T	missense	2.62	0	180	0.259	Isocitrate/isopropylmalate dehydrogenase	rs121913499							2-oxoglutarate metabolic process,NAD binding,NADPH regeneration,carbohydrate metabolic process,cellular lipid metabolic process,cytoplasm,cytosol,glutathione metabolic process,glyoxylate cycle,isocitrate dehydrogenase (NADP+) activity,isocitrate metabolic process,magnesium ion binding,mitochondrion,oxidoreductase activity,oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor,peroxisomal matrix,peroxisome,protein homodimerization activity,response to oxidative stress,tricarboxylic acid cycle	2'-Monophosphoadenosine 5'-Diphosphoribose,Isocitric Acid	untested	0.00001	510.016	G=1777, A=223, C=0, T=0		G=1017/760, A=128/95, C=0/0, T=0/0	1,1,1	

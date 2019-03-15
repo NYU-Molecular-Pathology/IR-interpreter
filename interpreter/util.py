@@ -34,6 +34,19 @@ def capitalize(x):
     else:
         return(x.title())
 
+def sanitize_tumor_tissue(label):
+    """
+    Cleans up tumor and tissue type labels for consistency
+    """
+    # remove trailing whitespace
+    label = label.strip()
+    # fix case
+    label = capitalize(label)
+    # replace empty string with 'Any'
+    if label == '':
+        label = "Any"
+    return(label)
+
 def debugger(vars):
     """
     starts interactive Python terminal at location in script

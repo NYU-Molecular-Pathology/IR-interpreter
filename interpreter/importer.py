@@ -23,7 +23,7 @@ sys.path.insert(0, parentdir)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
 django.setup()
 from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType, NYUTier
-from interpreter.util import capitalize, debugger
+from interpreter.util import sanitize_tumor_tissue, debugger
 sys.path.pop(0)
 
 # load relative paths from JSON file
@@ -151,8 +151,8 @@ def import_PMKB(**kwargs):
             break
         else:
             # get the tumor type from the database
-            tumor_type_instance = TumorType.objects.get(type = capitalize(row['TumorType']))
-            tissue_type_instance = TissueType.objects.get(type = capitalize(row['TissueType']))
+            tumor_type_instance = TumorType.objects.get(type = sanitize_tumor_tissue(row['TumorType']))
+            tissue_type_instance = TissueType.objects.get(type = sanitize_tumor_tissue(row['TissueType']))
 
             # add the interpretations first
             interpretation_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
@@ -198,7 +198,7 @@ def import_tumor_types(**kwargs):
     num_created = 0
     num_skipped = 0
     for tumor_type in tumor_types:
-        instance, created = TumorType.objects.get_or_create(type = capitalize(tumor_type))
+        instance, created = TumorType.objects.get_or_create(type = sanitize_tumor_tissue(tumor_type))
         if created:
             num_created += 1
         else:
@@ -220,12 +220,12 @@ def import_tissue_types(**kwargs):
     num_created = 0
     num_skipped = 0
     for tissue_type in tissue_types:
-        instance, created = TissueType.objects.get_or_create(type = capitalize(tissue_type))
+        instance, created = TissueType.objects.get_or_create(type = sanitize_tumor_tissue(tissue_type))
         if created:
             num_created += 1
         else:
             num_skipped += 1
-    print("Added {new} new tissue types ({skipped} skipped) to the databse".format(
+    print("Added {new} new tissue types ({skipped} skipped) to the database".format(
     new = num_created,
     skipped = num_skipped
     ))
@@ -241,8 +241,8 @@ def import_nyu_tiers(**kwargs):
         reader = csv.DictReader(f)
         # debugger(locals().copy())
         for row in reader:
-            tumor_type_instance = TumorType.objects.get(type = capitalize(row['tumor_type']).strip())
-            tissue_type_instance = TissueType.objects.get(type = capitalize(row['tissue_type']).strip())
+            tumor_type_instance = TumorType.objects.get(type = sanitize_tumor_tissue(row['tumor_type']))
+            tissue_type_instance = TissueType.objects.get(type = sanitize_tumor_tissue(row['tissue_type']))
             instance, created = NYUTier.objects.get_or_create(
             gene = row['gene'],
             variant_type = row['type'],

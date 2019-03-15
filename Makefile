@@ -83,7 +83,7 @@ backup:
 
 # ~~~~~ RUN ~~~~~ #
 # runs the web server
-runserver:
+runserver: secret-key
 	python manage.py runserver
 
 # start interactive shell
@@ -110,7 +110,7 @@ test-interpret:
 
 # write the unique tumor and tissue types to JSON files in the current directory from the PMKB file
 get-pmkb-tumor-tissue-types:
-	interpreter/scripts/get_pmkb_tissue_tumor_types.py
+	interpreter/scripts/get_tissue_tumor_types.py
 
 # ~~~~~ RESET ~~~~~ #
 # re-initialize just the databases

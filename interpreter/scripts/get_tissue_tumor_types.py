@@ -14,7 +14,7 @@ import re
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, parentdir)
 import importer
-from util import capitalize
+from util import sanitize_tumor_tissue
 sys.path.pop(0)
 
 # get the configs
@@ -53,20 +53,12 @@ with open(nyu_interpretations_tsv) as f:
 
 # clean up the entries; remove trailing spaces, capitalize, unique, sort
 tumor_types = nyu_interpretations_tumor_types + nyu_tier_tumor_types + pmkb_tumor_types
-tumor_types = [ i.strip() for i in tumor_types ]
-tumor_types = [ capitalize(i) for i in tumor_types ]
-# need to include empty string
-tumor_types = tumor_types + ['']
+tumor_types = [ sanitize_tumor_tissue(i) for i in tumor_types ]
 tumor_types = sorted(set(tumor_types))
-# tumor_types = [ i for i in tumor_types if i != '' ]
 
 tissue_types = nyu_interpretations_tissue_types + nyu_tier_tissue_types + pmkb_tissue_types
-tissue_types = [ i.strip() for i in tissue_types ]
-tissue_types = [ capitalize(i) for i in tissue_types ]
-# need to include empty string
-tissue_types = tissue_types + ['']
+tissue_types = [ sanitize_tumor_tissue(i) for i in tissue_types ]
 tissue_types = sorted(set(tissue_types))
-# tissue_types = [ i for i in tissue_types if i != '' ]
 
 # write output
 with open(output_tumor_types_json, "w") as f:
