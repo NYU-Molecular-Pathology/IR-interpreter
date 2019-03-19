@@ -84,6 +84,7 @@ backup:
 
 # ~~~~~ RUN ~~~~~ #
 # runs the web server
+runserver: export DJANGO_DEBUG:=True
 runserver: secret-key
 	python manage.py runserver
 

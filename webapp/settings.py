@@ -27,7 +27,10 @@ LOG_DIR = os.path.realpath(os.environ.get('LOG_DIR', 'logs'))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+USE_DEBUG = os.environ.get('DJANGO_DEBUG', False)
+if USE_DEBUG:
+    USE_DEBUG = True
+DEBUG = USE_DEBUG
 
 ALLOWED_HOSTS = []
 
