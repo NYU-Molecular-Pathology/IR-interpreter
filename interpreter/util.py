@@ -52,6 +52,15 @@ def sanitize_tumor_tissue(label):
         label = "Any"
     return(label)
 
+def sanitize_genes(genes):
+    """
+    """
+    new_genes = []
+    for gene in genes:
+        if gene != '-':
+            new_genes.append(gene)
+    return(new_genes)
+
 def debugger(vars):
     """
     starts interactive Python terminal at location in script

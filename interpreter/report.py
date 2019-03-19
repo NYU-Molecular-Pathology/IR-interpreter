@@ -52,7 +52,13 @@ def make_report_html(input, template = 'report.html', **params):
         tissue_type = tissue_type,
         tumor_type = tumor_type
         )
-    table = interpret.interpret_nyu_tier(ir_table = table,
+    table = interpret.interpret_nyu_tier(
+        ir_table = table,
+        tissue_type = tissue_type,
+        tumor_type = tumor_type
+        )
+    table = interpret.interpret_nyu_interpretation(
+        ir_table = table,
         tissue_type = tissue_type,
         tumor_type = tumor_type
         )

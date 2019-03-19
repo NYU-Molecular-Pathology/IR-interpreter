@@ -156,6 +156,30 @@ th, td {
         {% endfor %}
         {% endif %}
       </table>
+      <table style="width:100%;", class="nyutiertable">
+        <tr>
+          <th>NYU Interpretation</th>
+          <th>Gene</th>
+          <th>TumorType</th>
+          <th>TissueType</th>
+          <th>Variant</th>
+          <th>VariantType</th>
+          <th>Citations</th>
+        </tr>
+        {% if 'nyu_interpretation' in record.interpretations %}
+        {% for interpretation in record.interpretations.nyu_interpretation  %}
+        <tr>
+            <td>{{ interpretation.interpretation }}</td>
+            <td>{{ interpretation.genes }}</td>
+            <td>{{ interpretation.tumor_type.type }}</td>
+            <td>{{ interpretation.tissue_type.type }}</td>
+            <td>{{ interpretation.variant }}</td>
+            <td>{{ interpretation.variant_type }}</td>
+            <td>{{ interpretation.citations }}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </table>
 
       <br>
       {% endfor %}

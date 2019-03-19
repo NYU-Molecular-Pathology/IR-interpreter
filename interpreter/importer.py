@@ -24,7 +24,7 @@ sys.path.insert(0, parentdir)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
 django.setup()
 from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType, NYUTier, NYUInterpretation
-from interpreter.util import sanitize_tumor_tissue, debugger
+from interpreter.util import sanitize_tumor_tissue, sanitize_genes, debugger
 sys.path.pop(0)
 import logging
 logger = logging.getLogger()

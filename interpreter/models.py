@@ -1,4 +1,5 @@
 from django.db import models
+from .util import sanitize_genes
 import json
 
 variant_types = (
@@ -98,7 +99,7 @@ class NYUInterpretation(models.Model):
         """
         Parse the genes into a list to save as genes_json
         """
-        gene_list = self.genes.split()
+        gene_list = sanitize_genes(self.genes.split())
         self.genes_json = json.dumps(gene_list)
 
         # call the parent save method

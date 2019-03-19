@@ -8,6 +8,7 @@ import sys
 import django
 from collections import defaultdict
 import logging
+import json
 
 logger = logging.getLogger()
 
@@ -16,7 +17,7 @@ parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, parentdir)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
 django.setup()
-from interpreter.models import PMKBVariant, TissueType, TumorType, NYUTier
+from interpreter.models import PMKBVariant, TissueType, TumorType, NYUTier, NYUInterpretation
 from interpreter.ir import IRTable
 from interpreter.util import debugger
 sys.path.pop(0)
@@ -165,6 +166,49 @@ def interpret_nyu_tier(ir_table, **params):
     # debugger(locals().copy())
     return(ir_table)
 
+def query_nyu_interpretation(genes, **params):
+    """
+    """
+    tissue_type = params.pop('tissue_type', None)
+    tumor_type = params.pop('tumor_type', None)
+    variant = params.pop('variant', None)
+    # build database query
+    logger.debug("building NYU interpretation database query")
+
+    variant_query =  NYUInterpretation.objects.all()
+    if tissue_type and tissue_type != 'Any':
+        logger.debug("adding tissue_type to query")
+        variant_query = variant_query.filter(tissue_type = TissueType.objects.get(type = tissue_type))
+    if tumor_type and tumor_type != 'Any':
+        logger.debug("adding tumor_type to query")
+        variant_query = variant_query.filter(tumor_type = TumorType.objects.get(type = tumor_type))
+    if variant:
+        logger.debug("adding variant to query")
+        variant_query = variant_query.filter(variant = variant)
+
+    results = []
+    for interpretation in variant_query:
+        interpretation_genes = json.loads(interpretation.genes_json)
+        if any(x in interpretation_genes for x in genes):
+            results.append(interpretation)
+    return(results)
+
+def interpret_nyu_interpretation(ir_table, **params):
+    """
+    """
+    tissue_type = params.pop('tissue_type', None)
+    tumor_type = params.pop('tumor_type', None)
+    variant = params.pop('variant', None)
+    logger.info("querying NYU interpretation database for records in the IRTable")
+    for record in ir_table.records:
+        nyu_interpretation_results = query_nyu_interpretation(genes = record.genes,
+            tissue_type = tissue_type,
+            tumor_type = tumor_type,
+            variant = variant)
+        record.interpretations['nyu_interpretation'] = nyu_interpretation_results
+    # debugger(locals().copy())
+    return(ir_table)
+
 def demo():
     tumor_type = "Any"
     tissue_type = "Any" # Adrenal Gland
@@ -173,11 +217,13 @@ def demo():
     ir_table = IRTable(source = ir_tsv)
     ir_table = interpret_pmkb(ir_table = ir_table, **params)
     ir_table = interpret_nyu_tier(ir_table = ir_table, **params)
+    ir_table = interpret_nyu_interpretation(ir_table = ir_table, **params)
     debugger(locals().copy())
     # print(ir_table.records[3].interpretations['pmkb'])
     # print(ir_table.records[3].interpretations['nyu_tier'])
     # print(ir_table.records[3].interpretations['nyu_tier'][0]['tiers'][0].tier)
     # print(ir_table.records[3].interpretations['nyu_tier'][0]['tiers'][0].protein)
+    # ir_table.records[11].interpretations['nyu_interpretation']
 
 if __name__ == '__main__':
     demo()
