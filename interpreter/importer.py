@@ -23,7 +23,7 @@ parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, parentdir)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
 django.setup()
-from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType, NYUTier
+from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType, NYUTier, NYUInterpretation
 from interpreter.util import sanitize_tumor_tissue, debugger
 sys.path.pop(0)
 import logging
@@ -396,6 +396,36 @@ def import_nyu_tiers(**kwargs):
         skipped = num_skipped
         ))
 
+def import_nyu_interpretations(**kwargs):
+    """
+    """
+    nyu_interpretations_tsv = kwargs.pop('nyu_interpretations_tsv', config['nyu_interpretations_tsv'])
+    num_created = 0
+    num_skipped = 0
+    with open(nyu_interpretations_tsv) as f:
+        reader = csv.DictReader(f, delimiter = '\t')
+        for row in reader:
+            tumor_type_instance = TumorType.objects.get(type = sanitize_tumor_tissue(row['TumorType']))
+            tissue_type_instance = TissueType.objects.get(type = sanitize_tumor_tissue(row['TissueType']))
+
+            instance, created = NYUInterpretation.objects.get_or_create(
+            genes = row['Gene'],
+            variant_type = row['VariantType'],
+            tumor_type = tumor_type_instance,
+            tissue_type = tissue_type_instance,
+            variant = row['Variant'],
+            interpretation = row['Interpretation'],
+            citations = row['Citation']
+            )
+            if created:
+                num_created += 1
+            else:
+                num_skipped += 1
+    logger.debug("Added {new} new NYU interpretations ({skipped} skipped) to the databse".format(
+    new = num_created,
+    skipped = num_skipped
+    ))
+
 def main(**kwargs):
     """
     Main control function for the module.
@@ -404,6 +434,7 @@ def main(**kwargs):
     tumor_types_json = kwargs.pop('tumor_types_json', config['tumor_types_json'])
     tissue_types_json = kwargs.pop('tissue_types_json', config['tissue_types_json'])
     nyu_tiers_csv = kwargs.pop('nyu_tiers_csv', config['nyu_tiers_csv'])
+    nyu_interpretations_tsv = kwargs.pop('nyu_interpretations_tsv', config['nyu_interpretations_tsv'])
     import_limit = kwargs.pop('import_limit', config['import_limit'])
     import_type = kwargs.pop('import_type', config['import_type'])
 
@@ -419,6 +450,10 @@ def main(**kwargs):
 
     if import_type == "nyu_tier":
         import_nyu_tiers(nyu_tiers_csv = nyu_tiers_csv)
+
+    if import_type == "nyu_interpretation":
+        import_nyu_interpretations(nyu_interpretations_tsv = nyu_interpretations_tsv)
+
 
 def parse():
     """

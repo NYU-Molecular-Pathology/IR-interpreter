@@ -68,6 +68,7 @@ import:
 	python interpreter/importer.py --type tumor_type
 	python interpreter/importer.py --type tissue_type
 	python interpreter/importer.py --type nyu_tier
+	python interpreter/importer.py --type nyu_interpretation
 	python interpreter/importer.py --type PMKB
 
 DJANGO_DB_BACKUP_SQL:=$(DB_BACKUP_PATH)/db.sql.gz

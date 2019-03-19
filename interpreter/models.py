@@ -83,7 +83,7 @@ class NYUInterpretation(models.Model):
     """
     variant = models.CharField(blank=True, max_length=255)
     variant_type = models.CharField(choices = variant_types, max_length=255)
-    # space delimeted list of gene IDs, user-entered
+    # space delimeted list of gene IDs, user-entered, could be many
     genes = models.CharField(blank=False, max_length=255)
     # auto-populated JSON list of genes from 'genes'
     genes_json = models.CharField(blank=True, max_length=255)

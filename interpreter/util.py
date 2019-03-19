@@ -76,7 +76,7 @@ def debugger(vars):
     sys.path.insert(0, parentdir)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
     django.setup()
-    from interpreter.models import PMKBVariant, TissueType, TumorType, NYUTier, PMKBInterpretation
+    from interpreter.models import PMKBVariant, TissueType, TumorType, NYUTier, PMKBInterpretation, NYUInterpretation
     from interpreter.ir import IRTable
     from interpreter.util import capitalize, debugger
     # vars = globals().copy() # in python "global" variables are actually module-level
