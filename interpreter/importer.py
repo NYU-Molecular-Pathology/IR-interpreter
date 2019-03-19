@@ -14,7 +14,8 @@ import pandas as pd
 import argparse
 import json
 import csv
-
+import hashlib
+from collections import defaultdict, OrderedDict
 
 # import django app
 # if __name__ == '__main__':
@@ -25,6 +26,8 @@ django.setup()
 from interpreter.models import PMKBVariant, PMKBInterpretation, TumorType, TissueType, NYUTier
 from interpreter.util import sanitize_tumor_tissue, debugger
 sys.path.pop(0)
+import logging
+logger = logging.getLogger()
 
 # load relative paths from JSON file
 config_json = os.path.join(os.path.realpath(os.path.dirname(__file__)), "importer.json")
@@ -118,6 +121,162 @@ def make_PMKB_entries(df):
     return(df3)
 
 
+def import_PMKB_bulk(entries):
+    """
+    """
+    num_created_interpretations = 0
+    num_skipped_interpretations = 0
+    # import unique interpretations first
+    # need to jump through some hoops to get all unique interpretations;
+    # iterate over dataframe and concatenate the interpretation fields to make a unique key
+    # use key in dict to store database entry instance to use later
+    logger.debug("Importing unique interpretations")
+    unique_interpretations = defaultdict(OrderedDict)
+    for index, row in entries.iterrows():
+        interpretation_data_str = "".join([
+            str(row['Interpretation']),
+            str(row['Citation']),
+            str(row['Source'])
+        ])
+        if interpretation_data_str not in unique_interpretations:
+            instance, created = PMKBInterpretation.objects.get_or_create(
+                interpretation = row['Interpretation'],
+                citations = row['Citation'],
+                source_row =  row['Source'],
+                )
+            unique_interpretations[interpretation_data_str]['instance'] = instance
+            unique_interpretations[interpretation_data_str]['created'] = created
+            if created:
+                num_created_interpretations += 1
+            else:
+                num_skipped_interpretations += 1
+        else:
+            num_skipped_interpretations += 1
+
+    logger.debug("Getting bulk variant entries")
+    num_created_variants = 0
+    num_skipped_variants = 0
+    # make list of bulk entries to import
+    bulk_variants = []
+    # list of skipped variants
+    not_created = []
+    # unique variants
+    unique_variants = defaultdict(OrderedDict)
+    for index, row in entries.iterrows():
+        # get forgeign key instances needed for each
+        interpretation_data_str = "".join([
+            str(row['Interpretation']),
+            str(row['Citation']),
+            str(row['Source'])
+        ])
+
+        # set unique key for each variant
+        variant_str = "".join([
+            row['Gene'],
+            row['TumorType'],
+            row['TissueType'],
+            row['Variant'],
+            str(row['Tier']),
+            row['Interpretation'],
+            row['Citation'],
+            str(row['Source'])
+        ])
+        variant_md5 = hashlib.md5(variant_str.encode('utf-8')).hexdigest()
+        if variant_str not in unique_variants:
+            unique_variants[variant_str]['row'] = row
+            variant_instance = PMKBVariant(
+            gene = row['Gene'],
+            tumor_type = TumorType.objects.get(type = sanitize_tumor_tissue(row['TumorType'])),
+            tissue_type = TissueType.objects.get(type = sanitize_tumor_tissue(row['TissueType'])),
+            variant = row['Variant'],
+            tier = row['Tier'],
+            interpretation = unique_interpretations[interpretation_data_str]['instance'],
+            source_row =  row['Source'],
+            uid = variant_md5
+            )
+            bulk_variants.append(variant_instance)
+            num_created_variants += 1
+        else:
+            not_created.append(row)
+            num_skipped_variants += 1
+    # add all variants to the database
+    logger.debug("Importing bulk variant entries")
+    PMKBVariant.objects.bulk_create(bulk_variants)
+
+    total_db_variants = PMKBVariant.objects.count() # 22834
+    total_db_interpretations = PMKBInterpretation.objects.count()# 408
+    logger.debug("Added {num_created} variants to the database. {tot_var} total variants and {tot_interp} total interpretations in the database".format(
+    num_created = num_created_variants,
+    tot_var = total_db_variants,
+    tot_interp = total_db_interpretations
+    ))
+    return(not_created)
+
+def import_PMKB_get_or_create(entries):
+    """
+    """
+    num_created_interpretations = 0
+    num_skipped_interpretations = 0
+    num_created_variants = 0
+    num_skipped_variants = 0
+    not_created = []
+    for index, row in entries.iterrows():
+        # set unique key for each variant
+        variant_str = "".join([
+            row['Gene'],
+            row['TumorType'],
+            row['TissueType'],
+            row['Variant'],
+            str(row['Tier']),
+            row['Interpretation'],
+            row['Citation'],
+            str(row['Source'])
+        ])
+        variant_md5 = hashlib.md5(variant_str.encode('utf-8')).hexdigest()
+
+        # get the tumor type from the database
+        tumor_type_instance = TumorType.objects.get(type = sanitize_tumor_tissue(row['TumorType']))
+        tissue_type_instance = TissueType.objects.get(type = sanitize_tumor_tissue(row['TissueType']))
+
+        # add the interpretations first
+        interpretation_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
+            interpretation = row['Interpretation'],
+            citations = row['Citation'],
+            source_row =  row['Source'],
+            )
+        if created_interpretation:
+            num_created_interpretations += 1
+        else:
+            num_skipped_interpretations += 1
+
+        # add the variant in each row
+        instance, created_variant = PMKBVariant.objects.get_or_create(
+            gene = row['Gene'],
+            tumor_type = tumor_type_instance,
+            tissue_type = tissue_type_instance,
+            variant = row['Variant'],
+            tier = row['Tier'],
+            interpretation = interpretation_instance,
+            source_row =  row['Source'],
+            uid = variant_md5
+        )
+        if created_variant:
+            num_created_variants += 1
+        else:
+            num_skipped_variants += 1
+            not_created.append(row)
+    total_db_variants = PMKBVariant.objects.count() # 22834
+    total_db_interpretations = PMKBInterpretation.objects.count()# 408
+    logger.debug("Added {new_interp} new interpretations ({skip_interp} skipped) and {new_var} new variants ({skip_var} skipped) to the database. {tot_var} total variants and {tot_interp} total interpretations in the database".format(
+    new_interp = num_created_interpretations,
+    skip_interp = num_skipped_interpretations,
+    new_var = num_created_variants,
+    skip_var = num_skipped_variants,
+    tot_var = total_db_variants,
+    tot_interp = total_db_interpretations
+    ))
+    return(not_created)
+
 def import_PMKB(**kwargs):
     """
     Imports entries from PMKB .xlsx file into the database
@@ -127,64 +286,40 @@ def import_PMKB(**kwargs):
 
     # convert the xlsx to a Pandas dataframe
     pmkb_df = xlsx2df(pmkb_xlsx)
-    print("Read {0} entries from xlsx file".format(len(pmkb_df.index)))
+    logger.debug("Read {0} entries from xlsx file".format(len(pmkb_df.index)))
 
     # need to clean and reformat some attributes of the dataframe
     pmkb_df = clean_pmkb_df(pmkb_df)
 
     # create the entries for the database
     entries = make_PMKB_entries(pmkb_df)
-    print("Generated {0} variant entries".format(len(entries.index)))
+    logger.debug("Generated {0} variant entries".format(len(entries.index)))
 
-    if int(import_limit) < 0:
-        import_limit = None
+    entries.to_csv("all_entries.tsv", sep = "\t")
 
-    print("Importing variant entries; import limit is: {0}".format(import_limit))
-    num_created_interpretations = 0
-    num_created_variants = 0
-    num_skipped_interpretations = 0
-    num_skipped_variants = 0
-    for index, row in entries.iterrows():
-        # NOTE: limit on number imported for dev; full import takes ~3min
-        # TODO: figure out how to speed this up
-        if import_limit and num_created_variants >= int(import_limit):
-            break
-        else:
-            # get the tumor type from the database
-            tumor_type_instance = TumorType.objects.get(type = sanitize_tumor_tissue(row['TumorType']))
-            tissue_type_instance = TissueType.objects.get(type = sanitize_tumor_tissue(row['TissueType']))
-
-            # add the interpretations first
-            interpretation_instance, created_interpretation = PMKBInterpretation.objects.get_or_create(
-                interpretation = row['Interpretation'],
-                citations = row['Citation'],
-                source_row =  row['Source'],
-                )
-            if created_interpretation:
-                num_created_interpretations += 1
-            else:
-                num_skipped_interpretations += 1
-
-            # add the variant in each row
-            instance, created_variant = PMKBVariant.objects.get_or_create(
-                gene = row['Gene'],
-                tumor_type = tumor_type_instance,
-                tissue_type = tissue_type_instance,
-                variant = row['Variant'],
-                tier = row['Tier'],
-                interpretation = interpretation_instance,
-                source_row =  row['Source']
-            )
-            if created_variant:
-                num_created_variants += 1
-            else:
-                num_skipped_variants += 1
-    print("Added {new_interp} new interpretations ({skip_interp} skipped) and {new_var} new variants ({skip_var} skipped) to the database".format(
-    new_interp = num_created_interpretations,
-    skip_interp = num_skipped_interpretations,
-    new_var = num_created_variants,
-    skip_var = num_skipped_variants
+    # remove duplicates caused by duplicate PMKB entries in Excel sheet
+    num_entries_start = entries.shape[0]
+    entries = entries.drop_duplicates()
+    num_entries_end = entries.shape[0]
+    logger.debug("Removed {0} duplicates; {1} unique entries remain to be imported to database".format(
+    num_entries_start - num_entries_end,
+    num_entries_end
     ))
+    if PMKBVariant.objects.count() == 0:
+        logger.debug("Importing interpretation entries in bulk")
+        not_created = import_PMKB_bulk(entries)
+    else:
+        logger.debug("Database already has variants entries; Importing interpretation entries individually. This might take a while...")
+        not_created = import_PMKB_get_or_create(entries)
+    # # debugger(locals().copy())
+
+    # save the skipped entries, if any
+    if len(not_created) > 0:
+        with open("pmkb.import.skipped.tsv", "w") as f:
+            writer = csv.DictWriter(f, delimiter = '\t', fieldnames = not_created[0].keys())
+            writer.writeheader()
+            for row in not_created:
+                writer.writerow({ k:str(v) for k,v in row.items() })
 
 def import_tumor_types(**kwargs):
     """
@@ -203,7 +338,7 @@ def import_tumor_types(**kwargs):
             num_created += 1
         else:
             num_skipped += 1
-    print("Added {new} new tumor types ({skipped} skipped) to the databse".format(
+    logger.debug("Added {new} new tumor types ({skipped} skipped) to the databse".format(
     new = num_created,
     skipped = num_skipped
     ))
@@ -225,7 +360,7 @@ def import_tissue_types(**kwargs):
             num_created += 1
         else:
             num_skipped += 1
-    print("Added {new} new tissue types ({skipped} skipped) to the database".format(
+    logger.debug("Added {new} new tissue types ({skipped} skipped) to the database".format(
     new = num_created,
     skipped = num_skipped
     ))
@@ -239,7 +374,6 @@ def import_nyu_tiers(**kwargs):
     num_skipped = 0
     with open(nyu_tiers_csv) as f:
         reader = csv.DictReader(f)
-        # debugger(locals().copy())
         for row in reader:
             tumor_type_instance = TumorType.objects.get(type = sanitize_tumor_tissue(row['tumor_type']))
             tissue_type_instance = TissueType.objects.get(type = sanitize_tumor_tissue(row['tissue_type']))
@@ -257,7 +391,7 @@ def import_nyu_tiers(**kwargs):
                 num_created += 1
             else:
                 num_skipped += 1
-        print("Added {new} new tissue types ({skipped} skipped) to the databse".format(
+        logger.debug("Added {new} new tissue types ({skipped} skipped) to the databse".format(
         new = num_created,
         skipped = num_skipped
         ))

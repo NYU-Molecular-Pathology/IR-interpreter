@@ -9,3 +9,4 @@ report.html
 db
 db/backup
 logs
+pmkb.import.skipped.tsv

@@ -59,6 +59,7 @@ class PMKBVariant(models.Model):
     tier = models.IntegerField()
     interpretation = models.ForeignKey('PMKBInterpretation', blank=True, null=True, on_delete = models.SET_NULL)
     source_row = models.IntegerField() # original row in .xlsx file
+    uid = models.CharField(null=False, unique = True, max_length=255) # need a unique key for database setup... put md5sum here
     imported = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     def __str__(self):
