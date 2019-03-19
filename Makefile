@@ -36,11 +36,11 @@ conda:
 	rm -f "$(CONDASH)"
 
 conda-install: conda
-	conda install -y django=2.1.2 \
+	conda install -y -c anaconda django=2.1.2 \
 	pandas=0.23.4 \
-	'xlrd>=0.9.0'
+	'xlrd>=0.9.0' \
+	gunicorn=19.9.0
 	pip install django-ipware==2.1.0
-
 # ~~~~~ SETUP DJANGO APP ~~~~~ #
 # create the app for development
 # start:
