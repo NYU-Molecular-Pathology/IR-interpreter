@@ -125,7 +125,7 @@ def query_nyu_tier(genes, **params):
         logger.debug("adding variant to query")
         variant_query = variant_query.filter(variant = variant)
 
-    # store proteins in dict; list of unique variants for each interpretation
+    # store proteins in dict; list of unique tiers for each protein
     logger.debug("getting unique protein codings from query")
     proteins = defaultdict(set)
     for variant_result in variant_query:
@@ -134,8 +134,7 @@ def query_nyu_tier(genes, **params):
     logger.debug("reformatting query results")
     results = []
     for key, value in proteins.items():
-        print(key, value)
-        d = {'interpretation': key, 'variants': list(value)}
+        d = {'protein': key, 'tiers': list(value)}
         results.append(d)
     return(results)
 
@@ -163,7 +162,7 @@ def interpret_nyu_tier(ir_table, **params):
             tumor_type = tumor_type,
             variant = variant)
         record.interpretations['nyu_tier'] = nyu_tier_results
-    debugger(locals().copy())
+    # debugger(locals().copy())
     return(ir_table)
 
 def demo():
@@ -173,8 +172,12 @@ def demo():
     ir_tsv = sys.argv[1] # "example-data/SeraSeq.tsv"
     ir_table = IRTable(source = ir_tsv)
     ir_table = interpret_pmkb(ir_table = ir_table, **params)
-    interpret_nyu_tier(ir_table = ir_table, **params)
-    print(ir_table.records[3].interpretations['pmkb'])
+    ir_table = interpret_nyu_tier(ir_table = ir_table, **params)
+    debugger(locals().copy())
+    # print(ir_table.records[3].interpretations['pmkb'])
+    # print(ir_table.records[3].interpretations['nyu_tier'])
+    # print(ir_table.records[3].interpretations['nyu_tier'][0]['tiers'][0].tier)
+    # print(ir_table.records[3].interpretations['nyu_tier'][0]['tiers'][0].protein)
 
 if __name__ == '__main__':
     demo()

@@ -31,6 +31,11 @@ th, td {
   background-color: #ffcccc;
 }
 
+.nyutiertable th {
+  background-color: #583af2;
+  color: white;
+}
+
   </style>
 
 </head>
@@ -123,6 +128,33 @@ th, td {
         {% endif %}
 
 
+      </table>
+
+      <table style="width:100%;", class="nyutiertable">
+        <tr>
+          <th>NYU Tier</th>
+          <th>Gene</th>
+          <th>TumorType</th>
+          <th>TissueType</th>
+          <th>Protein</th>
+          <th>Coding</th>
+          <th>Comment</th>
+        </tr>
+        {% if 'nyu_tier' in record.interpretations %}
+        {% for interpretation in record.interpretations.nyu_tier  %}
+        {% for tier in interpretation.tiers  %}
+        <tr>
+            <td>{{ tier.tier }}</td>
+            <td>{{ tier.gene }}</td>
+            <td>{{ tier.tumor_type }}</td>
+            <td>{{ tier.tissue_type }}</td>
+            <td>{{ tier.protein }}</td>
+            <td>{{ tier.coding }}</td>
+            <td>{{ tier.comment }}</td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
       </table>
 
       <br>

@@ -48,6 +48,8 @@ def sanitize_tumor_tissue(label):
     # replace 'All' with 'Any'
     if label == 'All':
         label = "Any"
+    if label == "All Tumor Types":
+        label = "Any"
     return(label)
 
 def debugger(vars):
