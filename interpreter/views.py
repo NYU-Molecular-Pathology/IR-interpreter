@@ -8,6 +8,9 @@ from ipware import get_client_ip
 
 # logger = logging.getLogger(__name__)
 logger = logging.getLogger()
+import os
+pid_logger = logging.getLogger('pid')
+pid_logger.info(os.getpid())
 
 # try to get the app version from the git repo
 version = None

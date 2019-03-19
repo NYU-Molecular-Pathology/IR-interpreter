@@ -56,6 +56,10 @@ LOGGING = {
         'custom': {
             'datefmt' : '%Y-%m-%d %H:%M:%S',
             'format': '[%(asctime)s] %(levelname)s (%(name)s:%(module)s:%(funcName)s:%(lineno)d) %(message)s'
+        },
+        'pid': {
+            'datefmt' : '%Y-%m-%d %H:%M:%S',
+            'format': ' %(message)s [%(asctime)s]'
         }
     },
     'handlers': {
@@ -64,6 +68,12 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': os.path.join(LOG_DIR, 'debug.log'),
             'formatter': 'custom',
+        },
+        'pid': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'pid'),
+            'formatter': 'pid',
         },
         'console': {
             'level': 'INFO',
@@ -106,6 +116,11 @@ LOGGING = {
             'handlers': ['file', 'console_custom'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        'pid': {
+            'handlers': ['pid'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     }
 }
