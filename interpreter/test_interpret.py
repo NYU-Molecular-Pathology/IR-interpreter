@@ -1,4 +1,5 @@
 import os
+import hashlib
 from django.test import TestCase
 from .models import PMKBVariant, PMKBInterpretation, TissueType, TumorType
 from .ir import IRTable
@@ -48,6 +49,16 @@ class TestInterpret(TestCase):
             for tissue in [ Lung, Any_tissue, Skin ]:
                 for gene in [ 'NRAS', 'EGFR' ]:
                     for interpretation in [ interpretation1, interpretation2 ]:
+                        variant_str = "".join([
+                            gene,
+                            tumor.type,
+                            tissue.type,
+                            '',
+                            str(1),
+                            interpretation.interpretation,
+                            str(1)
+                        ])
+                        variant_md5 = hashlib.md5(variant_str.encode('utf-8')).hexdigest()
                         PMKBVariant.objects.create(
                             gene = gene,
                             tumor_type = tumor,
@@ -55,10 +66,21 @@ class TestInterpret(TestCase):
                             variant = '',
                             tier = 1,
                             interpretation = interpretation,
-                            source_row =  1
+                            source_row =  1,
+                            uid = variant_md5
                         )
 
         # add extraneous entries that should not match anything in any tests
+        variant_str = "".join([
+            'EGFR',
+            Adenocarcinoma.type,
+            Lung.type,
+            '',
+            str(1),
+            interpretation3.interpretation,
+            str(1)
+        ])
+        variant_md5 = hashlib.md5(variant_str.encode('utf-8')).hexdigest()
         PMKBVariant.objects.create(
             gene = 'EGFR',
             tumor_type = Adenocarcinoma,
@@ -66,8 +88,20 @@ class TestInterpret(TestCase):
             variant = '',
             tier = 1,
             interpretation = interpretation3,
-            source_row =  1
+            source_row =  1,
+            uid = variant_md5
         )
+
+        variant_str = "".join([
+            'SOX9',
+            Carcinoma.type,
+            Skin.type,
+            '',
+            str(1),
+            interpretation3.interpretation,
+            str(1)
+        ])
+        variant_md5 = hashlib.md5(variant_str.encode('utf-8')).hexdigest()
         PMKBVariant.objects.create(
             gene = 'SOX9',
             tumor_type = Carcinoma,
@@ -75,7 +109,8 @@ class TestInterpret(TestCase):
             variant = '',
             tier = 1,
             interpretation = interpretation3,
-            source_row =  1
+            source_row =  1,
+            uid = variant_md5
         )
 
     def test_total_num_test_db_entries(self):
