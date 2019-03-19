@@ -200,7 +200,7 @@ def import_PMKB_bulk(entries):
             not_created.append(row)
             num_skipped_variants += 1
     # add all variants to the database
-    logger.debug("Importing bulk variant entries")
+    logger.debug("Importing bulk variant entries ({0} total)".format(len(bulk_variants)))
     PMKBVariant.objects.bulk_create(bulk_variants)
 
     total_db_variants = PMKBVariant.objects.count() # 22834
