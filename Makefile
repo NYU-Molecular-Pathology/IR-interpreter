@@ -85,13 +85,21 @@ backup:
 	python manage.py dumpdata --database=interpreter_db interpreter --indent 4 --traceback | gzip > "$(INTERPRETER_DB_BACKUP_JSON)"
 
 # ~~~~~ RUN ~~~~~ #
-# runs the web server
+# runs the web server locally for debugging
 runserver: export DJANGO_DEBUG:=True
 runserver: secret-key
 	python manage.py runserver
 
-deploy:
-	gunicorn webapp.wsgi --pid logs/gunicorn.pid
+# production app deployment
+deploy: export GUNICORN_NAME:=gunicorn-IR-interpreter
+deploy: export GUNICORN_CONFIG:=../server-conf/IR-interpreter/gunicorn_config.py
+deploy: $(GUNICORN_CONFIG) secret-key
+	gunicorn webapp.wsgi --config "$(GUNICORN_CONFIG)" \
+	--pid logs/gunicorn.pid \
+	--access-logfile logs/gunicorn.access.log \
+	--error-logfile logs/gunicorn.error.log \
+	--log-file logs/gunicorn.log \
+	--name "$(GUNICORN_NAME)" &
 
 # start interactive shell
 shell:
