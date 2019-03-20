@@ -37,7 +37,7 @@ DEBUG = USE_DEBUG
 ALLOWED_HOSTS = ['*']
 
 # save process ID to file
-PID_FILE = os.path.join(LOG_DIR, 'pid')
+PID_FILE = os.path.join(LOG_DIR, 'IR-interpreter.pid')
 PID = os.getpid()
 with open(PID_FILE, "w") as f:
     f.write(str(PID))
