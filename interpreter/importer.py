@@ -295,7 +295,7 @@ def import_PMKB(**kwargs):
     entries = make_PMKB_entries(pmkb_df)
     logger.debug("Generated {0} variant entries".format(len(entries.index)))
 
-    entries.to_csv("all_entries.tsv", sep = "\t")
+    # entries.to_csv("all_entries.tsv", sep = "\t")
 
     # remove duplicates caused by duplicate PMKB entries in Excel sheet
     num_entries_start = entries.shape[0]

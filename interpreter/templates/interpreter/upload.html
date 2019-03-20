@@ -1,5 +1,5 @@
 {% block upload %}
-<h3>Upload Ion Reporter .tsv file</h3>
+<h4>Upload Ion Reporter .tsv file</h4>
 <form method=post enctype=multipart/form-data action=/upload/ target=output>
     {% csrf_token %}
     <input type=file name=irtable>
