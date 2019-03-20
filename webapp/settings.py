@@ -32,7 +32,9 @@ if USE_DEBUG:
     USE_DEBUG = True
 DEBUG = USE_DEBUG
 
-ALLOWED_HOSTS = []
+# https://docs.djangoproject.com/en/2.1/ref/settings/#allowed-hosts
+# change this for production deployment
+ALLOWED_HOSTS = ['*']
 
 # save process ID to file
 PID_FILE = os.path.join(LOG_DIR, 'pid')

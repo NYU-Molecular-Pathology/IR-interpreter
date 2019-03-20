@@ -39,7 +39,8 @@ conda-install: conda
 	conda install -y -c anaconda django=2.1.2 \
 	pandas=0.23.4 \
 	'xlrd>=0.9.0' \
-	gunicorn=19.9.0
+	gunicorn=19.9.0 \
+	nginx=1.15.5
 	pip install django-ipware==2.1.0
 # ~~~~~ SETUP DJANGO APP ~~~~~ #
 # create the app for development
@@ -88,6 +89,9 @@ backup:
 runserver: export DJANGO_DEBUG:=True
 runserver: secret-key
 	python manage.py runserver
+
+deploy:
+	gunicorn webapp.wsgi --pid logs/gunicorn.pid
 
 # start interactive shell
 shell:

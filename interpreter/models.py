@@ -17,7 +17,7 @@ class UserAccessMetric(models.Model):
     view = models.CharField(max_length=255)
     visited = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return(self.ip)
+        return("{0} [{1}]".format(self.view, self.ip))
 
 class UserUploadMetric(models.Model):
     """
