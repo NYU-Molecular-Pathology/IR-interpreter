@@ -34,6 +34,12 @@ DEBUG = USE_DEBUG
 
 ALLOWED_HOSTS = []
 
+# save process ID to file
+PID_FILE = os.path.join(LOG_DIR, 'pid')
+PID = os.getpid()
+with open(PID_FILE, "w") as f:
+    f.write(str(PID))
+
 # also see these:
 # https://docs.djangoproject.com/en/2.1/topics/logging/
 # conda/lib/python3.6/site-packages/django/utils/log.py

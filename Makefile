@@ -64,6 +64,7 @@ init: secret-key $(DB_DIR)
 	python manage.py createsuperuser
 
 # import data from PMKB .xlsx into database
+import: export DJANGO_DEBUG:=True
 import:
 	python interpreter/importer.py --type tumor_type
 	python interpreter/importer.py --type tissue_type
