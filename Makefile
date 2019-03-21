@@ -47,8 +47,7 @@ conda-install: conda
 	conda install -y -c anaconda django=2.1.2 \
 	pandas=0.23.4 \
 	'xlrd>=0.9.0' \
-	gunicorn=19.9.0 \
-	nginx=1.15.5
+	gunicorn=19.9.0
 	pip install django-ipware==2.1.0
 
 # ~~~~~ SETUP DJANGO APP ~~~~~ #
@@ -100,16 +99,32 @@ runserver: secret-key
 	python manage.py runserver
 
 # production app deployment
-deploy: export GUNICORN_NAME:=gunicorn-IR-interpreter
-deploy: export GUNICORN_CONFIG:=../server-conf/$(HOSTNAME)/IR-interpreter/gunicorn_config.py
+# socket must match what is in nginx config
+SOCKET:=unix:$(CURDIR)/IR-interpreter.sock
+GUNICORN_NAME:=gunicorn-IR-interpreter
+# gunicorn config stored separately
+GUNICORN_CONFIG:=../server-conf/$(HOSTNAME)/IR-interpreter/gunicorn_config.py
+GUNICORN_PIDFILE:=logs/gunicorn.pid
+GUNICORN_ACCESS_LOG:=logs/gunicorn.access.log
+GUNICORN_ERROR_LOG:=logs/gunicorn.error.log
+GUNICORN_LOG:=logs/gunicorn.log
 deploy: $(GUNICORN_CONFIG) secret-key
-	gunicorn webapp.wsgi --config "$(GUNICORN_CONFIG)" \
-	--pid logs/gunicorn.pid \
-	--access-logfile logs/gunicorn.access.log \
-	--error-logfile logs/gunicorn.error.log \
-	--log-file logs/gunicorn.log \
-	--name "$(GUNICORN_NAME)" &
-# --daemon \
+	gunicorn webapp.wsgi \
+	--bind "$(SOCKET)" \
+	--config "$(GUNICORN_CONFIG)" \
+	--pid "$(GUNICORN_PIDFILE)" \
+	--access-logfile "$(GUNICORN_ACCESS_LOG)" \
+	--error-logfile "$(GUNICORN_ERROR_LOG)" \
+	--log-file "$(GUNICORN_LOG)" \
+	--name "$(GUNICORN_NAME)" \
+	--daemon
+
+check:
+	ps -ax | grep gunicorn
+
+kill: GUNICORN_PID=$(shell head -1 $(GUNICORN_PIDFILE))
+kill: $(GUNICORN_PIDFILE)
+	kill "$(GUNICORN_PID)"
 
 # start interactive shell
 shell:

@@ -39,7 +39,11 @@ def index(request):
     logger.info("index requested")
     ip, is_routable = get_client_ip(request)
     # save user access logging
-    instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'index')
+    try:
+        # TODO: Fix this; unique constraint in db
+        instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'index')
+    except:
+        logger.error("Could not record UserAccessMetric")
 
     # get all the available tumor and tissue types to populate the uploads form
     logger.debug("retrieving the available tumor and tissue types")
@@ -63,7 +67,12 @@ def upload(request):
     if request.method == 'POST' and 'irtable' in request.FILES:
         logger.info("POST requested")
         ip, is_routable = get_client_ip(request)
-        instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'upload')
+
+        try:
+            instance, created = UserAccessMetric.objects.get_or_create(ip = ip, view = 'upload')
+        except:
+            logger.error("Could not record UserAccessMetric")
+
         # check for a tumor or tissue type passed
         # use 'Any' as the default value, pass as None-type to exclude filtering
         tissue_type = request.POST.get('tissue_type', 'Any')
@@ -85,7 +94,11 @@ def upload(request):
             logger.error("Invalid file type")
             return HttpResponse('Error: Invalid file type, filename must end with ".tsv"')
 
-        instance, created = UserUploadMetric.objects.get_or_create(ip = ip, size = request.FILES['irtable'].size)
+        try:
+            # TODO: Fix this; unique constraint in db
+            instance, created = UserUploadMetric.objects.get_or_create(ip = ip, size = request.FILES['irtable'].size)
+        except:
+            logger.error("Could not record UserUploadMetric")        
 
         # try to generate the HTML report
         try:
