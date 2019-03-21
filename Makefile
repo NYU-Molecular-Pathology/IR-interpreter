@@ -16,7 +16,10 @@ DJANGO_DB_PATH:=$(DB_DIR)/$(DJANGO_DB)
 INTERPRETER_DB_PATH:=$(DB_DIR)/$(INTERPRETER_DB)
 
 # ~~~~~~ FIRST TIME INITIAL INSTALLATION ~~~~~~ #
-install: conda-install init import
+install: conda-install init import static-files
+	python manage.py collectstatic
+
+static-files:
 	python manage.py collectstatic
 
 # ~~~~~ Setup Conda ~~~~~ #
