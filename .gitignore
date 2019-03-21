@@ -10,3 +10,4 @@ db
 db/backup
 logs
 pmkb.import.skipped.tsv
+static*

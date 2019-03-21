@@ -1,5 +1,6 @@
 SHELL:=/bin/bash
 UNAME:=$(shell uname)
+HOSTNAME:=$(shell hostname)
 
 # app locations and configs
 export LOG_DIR:=logs
@@ -16,6 +17,7 @@ INTERPRETER_DB_PATH:=$(DB_DIR)/$(INTERPRETER_DB)
 
 # ~~~~~~ FIRST TIME INITIAL INSTALLATION ~~~~~~ #
 install: conda-install init import
+	python manage.py collectstatic
 
 # ~~~~~ Setup Conda ~~~~~ #
 PATH:=$(CURDIR)/conda/bin:$(PATH)
@@ -96,7 +98,7 @@ runserver: secret-key
 
 # production app deployment
 deploy: export GUNICORN_NAME:=gunicorn-IR-interpreter
-deploy: export GUNICORN_CONFIG:=../server-conf/IR-interpreter/gunicorn_config.py
+deploy: export GUNICORN_CONFIG:=../server-conf/$(HOSTNAME)/IR-interpreter/gunicorn_config.py
 deploy: $(GUNICORN_CONFIG) secret-key
 	gunicorn webapp.wsgi --config "$(GUNICORN_CONFIG)" \
 	--pid logs/gunicorn.pid \
@@ -104,6 +106,7 @@ deploy: $(GUNICORN_CONFIG) secret-key
 	--error-logfile logs/gunicorn.error.log \
 	--log-file logs/gunicorn.log \
 	--name "$(GUNICORN_NAME)" &
+# --daemon \
 
 # start interactive shell
 shell:
