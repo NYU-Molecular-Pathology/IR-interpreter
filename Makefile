@@ -14,6 +14,9 @@ DB_BACKUP_PATH:=$(DB_BACKUP_DIR)/$(TIMESTAMP)
 DJANGO_DB_PATH:=$(DB_DIR)/$(DJANGO_DB)
 INTERPRETER_DB_PATH:=$(DB_DIR)/$(INTERPRETER_DB)
 
+# ~~~~~~ FIRST TIME INITIAL INSTALLATION ~~~~~~ #
+install: conda-install init import
+
 # ~~~~~ Setup Conda ~~~~~ #
 PATH:=$(CURDIR)/conda/bin:$(PATH)
 unexport PYTHONPATH
@@ -42,6 +45,7 @@ conda-install: conda
 	gunicorn=19.9.0 \
 	nginx=1.15.5
 	pip install django-ipware==2.1.0
+
 # ~~~~~ SETUP DJANGO APP ~~~~~ #
 # create the app for development
 # start:
