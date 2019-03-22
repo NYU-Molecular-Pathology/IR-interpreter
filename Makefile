@@ -44,7 +44,8 @@ conda:
 	rm -f "$(CONDASH)"
 
 conda-install: conda
-	conda install -y -c anaconda django=2.1.2 \
+	conda install -y -c anaconda \
+	django=2.1.5 \
 	pandas=0.23.4 \
 	'xlrd>=0.9.0' \
 	gunicorn=19.9.0
