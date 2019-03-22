@@ -11,3 +11,7 @@ db/backup
 logs
 pmkb.import.skipped.tsv
 static*
+all_entries.tsv
+skipped.tsv
+tissue_types.csv
+tumor_types.csv
