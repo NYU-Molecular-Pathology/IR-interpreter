@@ -1,6 +1,7 @@
 from django.db import models
 from .util import sanitize_genes
 import json
+import os
 
 variant_types = (
 ('snp', 'snp'),
@@ -78,6 +79,42 @@ class PMKBInterpretation(models.Model):
     def __str__(self):
         return('[{0}] {1}...'.format(self.id, self.interpretation[:15]))
 
+# load relative paths from JSON file
+config_json = os.path.join(os.path.realpath(os.path.dirname(__file__)), "importer.json")
+with open(config_json) as f:
+    config_json_data = json.load(f)
+
+fixtures_dir = os.path.join(os.path.realpath(os.path.dirname(__file__)), config_json_data['fixtures_dir'])
+nyu_added_interpretations_json = os.path.join(fixtures_dir, config_json_data['nyu_added_interpretations_json'])
+nyu_added_tiers_json = os.path.join(fixtures_dir, config_json_data['nyu_added_tiers_json'])
+
+def NYUInterpretation_to_json(instance, json_file = nyu_added_interpretations_json):
+    """
+    Save copies of all items to a JSON file
+    """
+    # load a list of old entries
+    with open(nyu_added_interpretations_json) as f:
+        data = json.load(f)
+    # start a dict to save to the JSON
+    d = {}
+    d['model'] = 'interpreter.NYUInterpretation'
+    d['pk'] = instance.id
+    d['fields'] = {}
+    d['fields']['variant'] = str(instance.variant)
+    d['fields']['variant_type'] = str(instance.variant_type)
+    d['fields']['genes'] = str(instance.genes)
+    d['fields']['tumor_type'] = str(instance.tumor_type.type)
+    d['fields']['tissue_type'] = str(instance.tissue_type.type)
+    d['fields']['interpretation'] = str(instance.interpretation)
+    d['fields']['citations'] = str(instance.citations)
+
+    # add new dict to list
+    data.append(d)
+
+    # write new JSON file
+    with open(nyu_added_interpretations_json, "w") as f:
+        json.dump(data, f, indent = 4)
+
 class NYUInterpretation(models.Model):
     """
     Custom NYU interpretation
@@ -101,6 +138,9 @@ class NYUInterpretation(models.Model):
         """
         gene_list = sanitize_genes(self.genes.split())
         self.genes_json = json.dumps(gene_list)
+
+        # save a copy to the JSON
+        NYUInterpretation_to_json(instance = self)
 
         # call the parent save method
         super().save(*args, **kwargs)
