@@ -5,6 +5,7 @@ from .report import make_report_html
 import subprocess
 import logging
 from ipware import get_client_ip
+from .tasks import add
 
 # logger = logging.getLogger(__name__)
 logger = logging.getLogger()
@@ -37,6 +38,11 @@ def index(request):
     Returns the home page index
     """
     logger.info("index requested")
+
+    logger.debug("adding 4 and 4...")
+    res = add.delay(4, 4)
+    logger.debug("now doing something else")
+
     ip, is_routable = get_client_ip(request)
     # save user access logging
     try:
@@ -98,7 +104,7 @@ def upload(request):
             # TODO: Fix this; unique constraint in db
             instance, created = UserUploadMetric.objects.get_or_create(ip = ip, size = request.FILES['irtable'].size)
         except:
-            logger.error("Could not record UserUploadMetric")        
+            logger.error("Could not record UserUploadMetric")
 
         # try to generate the HTML report
         try:

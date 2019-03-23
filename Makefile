@@ -44,12 +44,22 @@ conda:
 	rm -f "$(CONDASH)"
 
 conda-install: conda
-	conda install -y -c anaconda \
+	conda install -y conda-forge::ncurses && \
+	conda install -y -c anaconda -c conda-forge \
 	django=2.1.5 \
 	pandas=0.23.4 \
 	'xlrd>=0.9.0' \
-	gunicorn=19.9.0
-	pip install django-ipware==2.1.0
+	gunicorn=19.9.0 \
+	celery=4.2.1 \
+	rabbitmq-server=3.7.13 && \
+	pip install \
+	django-ipware==2.1.0 \
+	django-celery-results==1.0.4 \
+	django-celery-beat==1.4.0
+
+conda-list:
+	conda list
+	conda info
 
 # ~~~~~ SETUP DJANGO APP ~~~~~ #
 # create the app for development
@@ -70,6 +80,7 @@ secret-key: $(SECRET_KEY_FILE)
 init: secret-key $(DB_DIR)
 	python manage.py makemigrations
 	python manage.py migrate
+	python manage.py migrate django_celery_results
 	python manage.py migrate interpreter --database=interpreter_db
 	python manage.py createsuperuser
 
@@ -152,6 +163,49 @@ test-interpret:
 # write the unique tumor and tissue types to JSON files in the current directory from the PMKB file
 get-pmkb-tumor-tissue-types:
 	interpreter/scripts/get_tissue_tumor_types.py
+
+# ~~~~~~ Celery tasks & RabbitMQ setup ~~~~~ #
+# need to start RabbitMQ before celery, and both before running app servers
+CELERY_PID_FILE:=$(LOG_DIR)/celery.pid
+CELERY_LOGFILE:=$(LOG_DIR)/celery.log
+celery-start:
+	celery worker \
+	--app webapp \
+	--loglevel info \
+	--pidfile "$(CELERY_PID_FILE)" \
+	--logfile "$(CELERY_LOGFILE)" \
+	--concurrency=1 \
+	--detach
+
+celery-check:
+	ps auxww | grep 'celery'
+	# ps auxww | grep 'celery worker'
+
+celery-stop:
+	ps auxww | grep 'celery worker' | awk '{print $$2}' | xargs kill -9
+
+# >>> from interpreter.tasks import add
+# >>> res = add.delay(2,3)
+# >>> res.status
+# >>> res.backend
+
+# https://www.rabbitmq.com/configure.html
+# https://www.rabbitmq.com/configure.html#customise-environment
+# https://www.rabbitmq.com/relocate.html
+export RABBITMQ_NODENAME:=rabbit@$(shell hostname)
+export RABBITMQ_NODE_IP_ADDRESS:=127.0.0.1
+export RABBITMQ_NODE_PORT:=5672
+export RABBITMQ_LOG_BASE:=$(LOG_DIR)
+export RABBITMQ_LOGS:=$(LOG_DIR)/rabbitmq.log
+export RABBITMQ_PID_FILE:=$(LOG_DIR)/rabbitmq.pid
+rabbitmq-start:
+	echo "$${RABBITMQ_LOGS}" ; \
+	rabbitmq-server -detached
+rabbitmq-stop:
+	rabbitmqctl stop
+rabbitmq-check:
+	rabbitmqctl status
+
 
 # ~~~~~ RESET ~~~~~ #
 # re-initialize just the databases

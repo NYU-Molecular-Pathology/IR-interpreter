@@ -146,7 +146,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'interpreter'
+    'interpreter',
+    'django_celery_results',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -234,3 +236,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# http://docs.celeryproject.org/en/latest/django/first-steps-with-django.html
+CELERY_RESULT_BACKEND = 'django-db'
