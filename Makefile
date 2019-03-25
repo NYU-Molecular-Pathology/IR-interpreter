@@ -17,7 +17,6 @@ INTERPRETER_DB_PATH:=$(DB_DIR)/$(INTERPRETER_DB)
 
 # ~~~~~~ FIRST TIME INITIAL INSTALLATION ~~~~~~ #
 install: conda-install init import static-files
-	python manage.py collectstatic
 
 static-files:
 	python manage.py collectstatic
