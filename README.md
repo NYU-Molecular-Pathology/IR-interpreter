@@ -51,6 +51,12 @@ make runserver
 
 This will start the app in the Django server. 
 
+The included unit tests can be run with:
+
+```
+make test
+```
+
 ### Deployment
 
 For production deployment, instead use this:
