@@ -83,4 +83,4 @@ An older version of the app based on Flask can be found here: https://github.com
 
 # Medical Disclaimer
 
-This resource is intended for purely research purposes. It should not be used for emergencies or medical or professional advice.
+This resource is intended for purely research purposes. It should not be used for emergencies or medical or professional advice. A finding of no interpretation does not necessarily indicate lack of relevance for any specific variant or biomarker alteration. Interpretations are not presented in ranked order of potential or predicted importance. These interpretations make no promise or guarantee of any clinical benefit (or lack of clinical benefit). Information contained on this website is not a substitute for a doctor's medical judgment or advice. 
