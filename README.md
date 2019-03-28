@@ -80,3 +80,7 @@ This will start a gunicorn server based on the supplied configuration file (an e
 - GNU make
 
 An older version of the app based on Flask can be found here: https://github.com/NYU-Molecular-Pathology/IR-interpreter-flask. This version includes extra offline features such as CLI reporting and rsync across servers. 
+
+# Medical Disclaimer
+
+This resource is intended for purely research purposes. It should not be used for emergencies or medical or professional advice.
