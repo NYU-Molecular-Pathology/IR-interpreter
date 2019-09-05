@@ -2,6 +2,8 @@
 
 Clinical interpreter for Ion Reporter and Oncomine analysis results.
 
+<img width="800" alt="Screen Shot 2019-03-24 at 11 18 09 PM" src="https://user-images.githubusercontent.com/10505524/54893222-28984800-4e8b-11e9-9553-f8a250eee3db.png">
+
 ## Overview
 
 The [Thermo Fisher S5](https://www.thermofisher.com/us/en/home/life-science/sequencing/next-generation-sequencing/ion-torrent-next-generation-sequencing-workflow/ion-torrent-next-generation-sequencing-run-sequence/ion-s5-ngs-targeted-sequencing.html) Next-Gen Sequencing platform can be used for the identification of structural variants, mutations, and other abnormalities in DNA and RNA samples using on-board Ion Reporter (IR) data analysis software suite. However, Ion Reporter does not include clinical interpretation of variants, which is a desired feature for users of the platform.
@@ -11,8 +13,6 @@ The [Precision Medicine Knowledge Base](https://pmkb.weill.cornell.edu/) ([PMKB]
 Clinicians at NYU have also begun to compile their own sets of interpretations and tiers of clinically relevant variants, for use with sign-out of cases using the S5 system. 
 
 IR-intepreter combines a pre-saved version of the PMKB database along with custom NYU variant interpretations in order to match clinical interpretations with user-provided variants exported from the Ion Reporter in .tsv format ([example here](https://github.com/NYU-Molecular-Pathology/IR-interpreter/blob/master/interpreter/fixtures/SeraSeq.tsv)). IR-intepreter presents a web application where users can upload their .tsv formatted variant export file and find interpretations for each variant, matched on gene, tissue type, and tumor type. 
-
-<img width="800" alt="Screen Shot 2019-03-24 at 11 18 09 PM" src="https://user-images.githubusercontent.com/10505524/54893222-28984800-4e8b-11e9-9553-f8a250eee3db.png">
 
 # Usage
 
