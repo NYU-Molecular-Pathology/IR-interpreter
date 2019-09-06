@@ -12,6 +12,7 @@ IR_tsv = os.path.join(fixtures_dir, "SeraSeq.tsv")
 NRAS_IDH1_tsv = os.path.join(fixtures_dir, "NRAS_IDH1.tsv")
 
 class TestInterpret(TestCase):
+    databases = '__all__'
     @classmethod # causes setup to only run once per instance of this class, instead of before every test
     def setUpTestData(self):
         # make demo fake db entries

@@ -7,6 +7,7 @@ fixtures_dir = os.path.join(os.path.dirname(__file__), "fixtures")
 IR_tsv = os.path.join(fixtures_dir, "SeraSeq.tsv")
 
 class TestIR(TestCase):
+    databases = '__all__'
     def setUp(self):
         self.IR_tsv = IR_tsv
         self.html = make_report_html(input = self.IR_tsv)
